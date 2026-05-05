@@ -1,0 +1,24 @@
+$kind: http-request
+name: " http://localhost:4000/api/inquiries"
+url: " http://localhost:4000/api/inquiries"
+method: POST
+headers:
+  Content-Type: application/JSON
+body:
+  type: json
+  content: "\r
+
+    \ {\r
+
+    \   \"fullName\": \"John Doe\",\r
+
+    \   \"email\": \"john@example.com\",\r
+
+    \   \"phone\": \"+92-300-1234567\",\r
+
+    \   \"city\": \"Karachi\",\r
+
+    \   \"message\": \"I am very interested in your custom furniture\"\r
+
+    \ }"
+order: 1859492314612885

@@ -1,0 +1,21 @@
+$kind: http-request
+name: 'GET List All Orders (Admin)'
+method: GET
+url: '{{baseUrl}}/api/orders/admin'
+order: 2000
+auth:
+  type: bearer
+  credentials:
+    - key: token
+      value: '{{adminToken}}'
+scripts:
+  - type: afterResponse
+    language: text/javascript
+    code: |-
+      pm.test("Status is 200", function () {
+        pm.response.to.have.status(200);
+      });
+      pm.test("Response has success: true", function () {
+        const json = pm.response.json();
+        pm.expect(json.success).to.be.true;
+      });

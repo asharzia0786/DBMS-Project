@@ -1,0 +1,35 @@
+$kind: http-request
+name: 'PATCH Update Product (Admin)'
+method: PATCH
+url: '{{baseUrl}}/api/products/{{productId}}'
+order: 4000
+auth:
+  type: bearer
+  credentials:
+    - key: token
+      value: '{{adminToken}}'
+headers:
+  - key: Content-Type
+    value: application/json
+body:
+  type: json
+  content: |-
+    {
+      "basePrice": 18000,
+      "finish": "Matte"
+    }
+scripts:
+  - type: afterResponse
+    language: text/javascript
+    code: |-
+      pm.test("Status is 200", function () {
+        pm.response.to.have.status(200);
+      });
+      pm.test("Response has success: true", function () {
+        const json = pm.response.json();
+        pm.expect(json.success).to.be.true;
+      });
+      pm.test("Response data.basePrice equals 18000", function () {
+        const json = pm.response.json();
+        pm.expect(json.data.basePrice).to.eql(18000);
+      });

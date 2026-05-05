@@ -1,0 +1,29 @@
+$kind: http-request
+name: 'GET Get Upload Signature (Admin)'
+method: GET
+url: '{{baseUrl}}/api/media/upload-signature'
+order: 1000
+auth:
+  type: bearer
+  credentials:
+    - key: token
+      value: '{{adminToken}}'
+queryParams:
+  - key: folder
+    value: products
+scripts:
+  - type: afterResponse
+    language: text/javascript
+    code: |-
+      pm.test("Status is 200", function () {
+        pm.response.to.have.status(200);
+      });
+      pm.test("Response has success: true", function () {
+        const json = pm.response.json();
+        pm.expect(json.success).to.be.true;
+      });
+      pm.test("Response data has signature and timestamp", function () {
+        const json = pm.response.json();
+        pm.expect(json.data).to.have.property("signature");
+        pm.expect(json.data).to.have.property("timestamp");
+      });

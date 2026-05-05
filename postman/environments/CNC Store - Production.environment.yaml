@@ -1,0 +1,32 @@
+$schema: 'https://schema.getpostman.com/json/collection/v2.1.0/environment.json'
+$kind: environment
+name: CNC Store - Production
+values:
+  - key: baseUrl
+    value: 'https://your-production-domain.com'
+    enabled: true
+    secret: false
+  - key: authToken
+    value: ''
+    enabled: true
+    secret: true
+  - key: adminToken
+    value: ''
+    enabled: true
+    secret: true
+  - key: productId
+    value: ''
+    enabled: true
+    secret: false
+  - key: productSlug
+    value: ''
+    enabled: true
+    secret: false
+  - key: orderId
+    value: ''
+    enabled: true
+    secret: false
+  - key: customOrderId
+    value: ''
+    enabled: true
+    secret: false

@@ -1,0 +1,21 @@
+$kind: http-request
+name: 'DELETE Delete Product (Admin)'
+method: DELETE
+url: '{{baseUrl}}/api/products/{{productId}}'
+order: 5000
+auth:
+  type: bearer
+  credentials:
+    - key: token
+      value: '{{adminToken}}'
+scripts:
+  - type: afterResponse
+    language: text/javascript
+    code: |-
+      pm.test("Status is 200", function () {
+        pm.response.to.have.status(200);
+      });
+      pm.test("Response has success: true", function () {
+        const json = pm.response.json();
+        pm.expect(json.success).to.be.true;
+      });

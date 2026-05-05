@@ -1,0 +1,40 @@
+$kind: http-request
+name: POST Create Order
+method: POST
+url: '{{baseUrl}}/api/orders'
+order: 3000
+auth:
+  type: bearer
+  credentials:
+    - key: token
+      value: '{{authToken}}'
+headers:
+  - key: Content-Type
+    value: application/json
+body:
+  type: json
+  content: |-
+    {
+      "type": "CATALOG",
+      "totalAmount": 25000,
+      "paymentStatus": "PENDING"
+    }
+scripts:
+  - type: afterResponse
+    language: text/javascript
+    code: |-
+      pm.test("Status is 201", function () {
+        pm.response.to.have.status(201);
+      });
+      pm.test("Response has success: true", function () {
+        const json = pm.response.json();
+        pm.expect(json.success).to.be.true;
+      });
+      pm.test("Response data has id", function () {
+        const json = pm.response.json();
+        pm.expect(json.data).to.have.property("id");
+      });
+      const json = pm.response.json();
+      if (json.success && json.data && json.data.id) {
+        pm.collectionVariables.set("orderId", json.data.id);
+      }

@@ -1,0 +1,28 @@
+$kind: http-request
+name: GET List My Orders
+method: GET
+url: '{{baseUrl}}/api/orders'
+order: 1000
+auth:
+  type: bearer
+  credentials:
+    - key: token
+      value: '{{authToken}}'
+scripts:
+  - type: afterResponse
+    language: text/javascript
+    code: |-
+      pm.test("Status is 200", function () {
+        pm.response.to.have.status(200);
+      });
+      pm.test("Response has success: true", function () {
+        const json = pm.response.json();
+        pm.expect(json.success).to.be.true;
+      });
+      pm.test("Response data is an array or paginated object", function () {
+        const json = pm.response.json();
+        pm.expect(json.data).to.exist;
+        const isArray = Array.isArray(json.data);
+        const isObject = typeof json.data === "object";
+        pm.expect(isArray || isObject).to.be.true;
+      });

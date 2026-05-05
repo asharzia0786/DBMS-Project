@@ -1,0 +1,51 @@
+$kind: http-request
+name: 'POST Create Product (Admin)'
+method: POST
+url: '{{baseUrl}}/api/products'
+order: 3000
+auth:
+  type: bearer
+  credentials:
+    - key: token
+      value: '{{adminToken}}'
+headers:
+  - key: Content-Type
+    value: application/json
+body:
+  type: json
+  content: |-
+    {
+      "name": "Test Marble Slab",
+      "slug": "test-marble-slab",
+      "description": "A beautiful test marble slab",
+      "basePrice": 15000,
+      "category": "Slabs",
+      "material": "Marble",
+      "finish": "Polished",
+      "images": [
+        { "imageUrl": "https://example.com/image.jpg", "altText": "Marble slab" }
+      ]
+    }
+scripts:
+  - type: afterResponse
+    language: text/javascript
+    code: |-
+      pm.test("Status is 201", function () {
+        pm.response.to.have.status(201);
+      });
+      pm.test("Response has success: true", function () {
+        const json = pm.response.json();
+        pm.expect(json.success).to.be.true;
+      });
+      pm.test("Response data has id and slug", function () {
+        const json = pm.response.json();
+        pm.expect(json.data).to.have.property("id");
+        pm.expect(json.data).to.have.property("slug");
+      });
+      const json = pm.response.json();
+      if (json.success && json.data && json.data.id) {
+        pm.collectionVariables.set("productId", json.data.id);
+      }
+      if (json.data && json.data.slug) {
+        pm.collectionVariables.set("productSlug", json.data.slug);
+      }

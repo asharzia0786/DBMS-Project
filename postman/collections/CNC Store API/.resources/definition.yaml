@@ -1,0 +1,18 @@
+$kind: collection
+name: CNC Store API
+description: 'Full API collection for the CNC clothing store backend. Uses Clerk JWT for authentication. Set the `baseUrl` variable to `http://localhost:3000` and `authToken` to your Clerk session JWT.'
+variables:
+  - key: baseUrl
+    value: 'http://localhost:3000'
+  - key: authToken
+    value: ''
+  - key: adminToken
+    value: ''
+  - key: productId
+    value: ''
+  - key: productSlug
+    value: ''
+  - key: orderId
+    value: ''
+  - key: customOrderId
+    value: ''

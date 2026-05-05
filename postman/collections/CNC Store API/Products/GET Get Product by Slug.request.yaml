@@ -1,0 +1,20 @@
+$kind: http-request
+name: GET Get Product by Slug
+method: GET
+url: '{{baseUrl}}/api/products/{{productSlug}}'
+order: 2000
+scripts:
+  - type: afterResponse
+    language: text/javascript
+    code: |-
+      pm.test("Status is 200", function () {
+        pm.response.to.have.status(200);
+      });
+      pm.test("Response has success: true", function () {
+        const json = pm.response.json();
+        pm.expect(json.success).to.be.true;
+      });
+      pm.test("Response data has a slug field", function () {
+        const json = pm.response.json();
+        pm.expect(json.data).to.have.property("slug");
+      });
