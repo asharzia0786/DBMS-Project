@@ -16,56 +16,7 @@ type ShowcaseProduct = {
   featured: boolean;
 };
 
-const FALLBACK_PRODUCTS: ShowcaseProduct[] = [
-  {
-    id: 'fallback-1',
-    name: 'Imperial Sovereign Bed',
-    collection: 'Royal Heritage',
-    material: 'Solid Pakistani Walnut',
-    size: 'King · Queen · Double',
-    price: 'From PKR 480,000',
-    desc: 'A monument in walnut. Floral CNC carvings echo Mughal court aesthetics, reimagined for the contemporary luxury bedroom.',
-    image: '/assets/bed-objects.png',
-    imagePosition: '0% 0%',
-    featured: true,
-  },
-  {
-    id: 'fallback-2',
-    name: 'Nocturne Wardrobe',
-    collection: 'Nocturne Series',
-    material: 'Walnut & Smoked Oak',
-    size: 'Bespoke Available',
-    price: 'From PKR 320,000',
-    desc: 'Dark smoked oak and walnut fuse in a wardrobe designed for those who dress with intention.',
-    image: '/assets/bed-objects.png',
-    imagePosition: '100% 0%',
-    featured: false,
-  },
-  {
-    id: 'fallback-3',
-    name: 'Alhambra Dining Suite',
-    collection: 'Palace Collection',
-    material: 'First-grade Shisham',
-    size: 'Custom 6–12 seater',
-    price: 'From PKR 680,000',
-    desc: 'Inspired by the geometric perfection of Alhambra Palace, each lattice joint is machined to 0.1mm accuracy.',
-    image: '/assets/bed-objects.png',
-    imagePosition: '100% 50%',
-    featured: false,
-  },
-  {
-    id: 'fallback-4',
-    name: 'Meridian Bedside Chest',
-    collection: 'Royal Heritage',
-    material: 'Solid Pakistani Walnut',
-    size: 'Standard · Tall',
-    price: 'From PKR 95,000',
-    desc: 'The finest companion to the Imperial Bed. Carved rosette panels catch and hold warm light.',
-    image: '/assets/bed-objects.png',
-    imagePosition: '100% 100%',
-    featured: false,
-  },
-];
+const FALLBACK_PRODUCTS: ShowcaseProduct[] = [];
 
 function formatCurrency(value: number): string {
   return `From PKR ${new Intl.NumberFormat('en-PK').format(value)}`;

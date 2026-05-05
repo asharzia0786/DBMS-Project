@@ -19,7 +19,7 @@ export default function FinalCTA() {
   const [submitted, setSubmitted] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
-  const [form, setForm] = useState({ name: '', phone: '', city: '', message: '' });
+  const [form, setForm] = useState({ fullName: '', email: '', phone: '', city: '', message: '' });
 
   const { scrollYProgress } = useScroll({
     target: ref,
@@ -188,7 +188,8 @@ export default function FinalCTA() {
                 </p>
                 <form onSubmit={handleSubmit} className="space-y-4">
                   {[
-                    { key: 'name', label: 'Full Name', type: 'text', placeholder: 'Your name' },
+                    { key: 'fullName', label: 'Full Name', type: 'text', placeholder: 'Your name' },
+                    { key: 'email', label: 'Email Address', type: 'email', placeholder: 'your@email.com' },
                     { key: 'phone', label: 'Phone Number', type: 'tel', placeholder: '+92 300 0000000' },
                     { key: 'city', label: 'City', type: 'text', placeholder: 'Lahore, Karachi, Islamabad...' },
                   ].map((field) => (

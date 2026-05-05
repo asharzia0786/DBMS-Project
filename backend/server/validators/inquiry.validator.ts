@@ -1,10 +1,11 @@
 import { z } from "zod";
 
 export const createInquirySchema = z.object({
-  name: z.string().trim().min(2).max(120),
+  fullName: z.string().trim().min(2).max(120),
+  email: z.string().trim().email().max(255),
   phone: z.string().trim().min(7).max(30),
   city: z.string().trim().min(2).max(120),
-  message: z.string().trim().max(2000).optional(),
+  message: z.string().trim().min(10).max(2000),
 });
 
 export const inquiryListQuerySchema = z.object({

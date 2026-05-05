@@ -26,7 +26,8 @@ export class InquiryService {
 
   public createInquiry(input: CreateInquiryInput) {
     return this.inquiryRepository.create({
-      name: input.name,
+      fullName: input.fullName,
+      email: input.email,
       phone: input.phone,
       city: input.city,
       message: input.message,

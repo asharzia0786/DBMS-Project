@@ -44,7 +44,8 @@ export type ProductListResponse = {
 };
 
 export type CreateInquiryPayload = {
-  name: string;
+  fullName: string;
+  email: string;
   phone: string;
   city: string;
   message: string;

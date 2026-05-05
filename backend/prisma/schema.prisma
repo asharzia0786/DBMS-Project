@@ -78,10 +78,11 @@ model Order {
 
 model Inquiry {
   id        String   @id @default(uuid())
-  name      String
+  fullName  String
+  email     String
   phone     String
   city      String
-  message   String?
+  message   String
   status    String   @default("NEW")
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
