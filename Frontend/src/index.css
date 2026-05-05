@@ -1,0 +1,149 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    background-color: #050403;
+  }
+
+  body {
+    background-color: #050403;
+    color: #e8d5b7;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    overflow-x: hidden;
+  }
+
+  ::selection {
+    background: rgba(212, 175, 114, 0.3);
+    color: #d4af72;
+  }
+
+  ::-webkit-scrollbar {
+    width: 4px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: #0e0804;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: #4e2f14;
+    border-radius: 2px;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: #d4af72;
+  }
+}
+
+@layer utilities {
+  .text-gradient-gold {
+    background: linear-gradient(135deg, #d4af72 0%, #f0d28a 40%, #b87a28 70%, #d4af72 100%);
+    background-size: 200% auto;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .text-gradient-shimmer {
+    background: linear-gradient(90deg, #8c5e2a 0%, #d4af72 25%, #f0d28a 50%, #d4af72 75%, #8c5e2a 100%);
+    background-size: 400% auto;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    animation: shimmer 4s linear infinite;
+  }
+
+  .glass-dark {
+    background: rgba(14, 8, 4, 0.6);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(212, 175, 114, 0.12);
+  }
+
+  .glass-card {
+    background: rgba(30, 17, 8, 0.7);
+    backdrop-filter: blur(24px);
+    -webkit-backdrop-filter: blur(24px);
+    border: 1px solid rgba(212, 175, 114, 0.15);
+  }
+
+  .glow-gold {
+    box-shadow: 0 0 40px rgba(212, 175, 114, 0.15), 0 0 80px rgba(140, 94, 42, 0.08);
+  }
+
+  .glow-gold-strong {
+    box-shadow: 0 0 60px rgba(212, 175, 114, 0.25), 0 0 120px rgba(140, 94, 42, 0.12);
+  }
+
+  .border-gold {
+    border-color: rgba(212, 175, 114, 0.25);
+  }
+
+  .noise-overlay::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 1;
+  }
+
+  .bed-crop {
+    width: 100%;
+    height: 100%;
+    background-repeat: no-repeat;
+    background-color: #0e0804;
+  }
+
+  .object-scroll-perspective {
+    perspective: 1400px;
+    transform-style: preserve-3d;
+  }
+
+  .cinematic-mask {
+    -webkit-mask-image: linear-gradient(90deg, transparent 0%, #000 12%, #000 88%, transparent 100%);
+    mask-image: linear-gradient(90deg, transparent 0%, #000 12%, #000 88%, transparent 100%);
+  }
+}
+
+@keyframes shimmer {
+  0%   { background-position: -400% center; }
+  100% { background-position:  400% center; }
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0px) translateX(0px); }
+  33%       { transform: translateY(-18px) translateX(8px); }
+  66%       { transform: translateY(-8px) translateX(-6px); }
+}
+
+@keyframes floatSlow {
+  0%, 100% { transform: translateY(0px) translateX(0px); }
+  50%       { transform: translateY(-28px) translateX(12px); }
+}
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(30px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes pulseGlow {
+  0%, 100% { opacity: 0.4; }
+  50%       { opacity: 0.8; }
+}
+
+@keyframes slowZoom {
+  from { transform: scale(1); }
+  to   { transform: scale(1.08); }
+}
+
+.animate-float { animation: float 8s ease-in-out infinite; }
+.animate-float-slow { animation: floatSlow 14s ease-in-out infinite; }
+.animate-fade-up { animation: fadeUp 1.2s ease-out forwards; }
+.animate-pulse-glow { animation: pulseGlow 3s ease-in-out infinite; }
+.animate-slow-zoom { animation: slowZoom 20s ease-in-out infinite alternate; }
+.animate-shimmer { animation: shimmer 4s linear infinite; }
