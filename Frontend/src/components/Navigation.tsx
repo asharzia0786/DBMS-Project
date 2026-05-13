@@ -1,8 +1,9 @@
 import { useState, useEffect } from 'react';
-import { SignedIn, SignedOut, UserButton } from '@clerk/clerk-react';
+import { SignedIn, SignedOut, UserButton, useUser } from '@clerk/clerk-react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { LogIn, Menu, ShoppingBag, UserRound, X } from 'lucide-react';
+import { LayoutDashboard, LogIn, Menu, ShoppingBag, UserRound, X } from 'lucide-react';
 import { useCart } from '../contexts/cart';
+import { isAdminUser } from '../lib/auth-role';
 
 const navLinks = [
   { label: 'Collection', href: '#collection' },
@@ -15,6 +16,42 @@ export default function Navigation() {
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const { itemCount } = useCart();
+  const { user } = useUser();
+  const isAdmin = isAdminUser(user);
+
+  const clerkAppearance = {
+    variables: {
+      colorBackground: '#0e0804',
+      colorInputBackground: '#050403',
+      colorInputText: '#e8d5b7',
+      colorText: '#e8d5b7',
+      colorTextSecondary: 'rgba(232, 213, 183, 0.68)',
+      colorPrimary: '#d4af72',
+    },
+    elements: {
+      userButtonAvatarBox: 'h-8 w-8 border border-champagne/30',
+      userButtonPopoverCard: 'bg-walnut-900/95 border border-champagne/15 text-beige shadow-none',
+      userButtonPopoverActionButton:
+        'text-beige hover:bg-walnut-800/80 hover:text-champagne transition-colors',
+      userButtonPopoverActionButtonText: 'text-beige/85',
+      userButtonPopoverFooter: 'border-t border-champagne/10 bg-walnut-900/90',
+      userPreviewTextContainer: 'text-beige',
+      userPreviewMainIdentifier: 'text-beige',
+      userPreviewSecondaryIdentifier: 'text-beige/60',
+      card: 'bg-walnut-900/95 border border-champagne/15 text-beige shadow-none',
+      navbar: 'bg-walnut-900/80 border-r border-champagne/10',
+      navbarButton: 'text-beige/75 hover:text-champagne hover:bg-walnut-800/70',
+      navbarButtonActive: 'bg-walnut-800 text-champagne',
+      pageScrollBox: 'bg-walnut-900/95',
+      profileSectionTitleText: 'text-beige/65',
+      formFieldLabel: 'text-beige/70',
+      formFieldInput:
+        'bg-void/70 border border-champagne/20 text-beige focus:border-champagne focus:ring-champagne/20',
+      formButtonPrimary:
+        'bg-champagne text-void hover:bg-gold-200 font-manrope uppercase tracking-[0.2em] text-[11px]',
+      footerActionLink: 'text-champagne hover:text-gold-200',
+    },
+  };
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 80);
@@ -82,6 +119,15 @@ export default function Navigation() {
               </a>
             </SignedOut>
             <SignedIn>
+              {isAdmin ? (
+                <a
+                  href="/admin"
+                  className="inline-flex items-center gap-2 font-manrope text-[10px] tracking-[0.24em] uppercase text-champagne hover:text-gold-200 transition-colors duration-300"
+                >
+                  <LayoutDashboard size={15} />
+                  Admin
+                </a>
+              ) : null}
               <a
                 href="/profile"
                 className="inline-flex items-center gap-2 font-manrope text-[10px] tracking-[0.24em] uppercase text-beige/70 hover:text-champagne transition-colors duration-300"
@@ -91,10 +137,9 @@ export default function Navigation() {
               </a>
               <UserButton
                 afterSignOutUrl="/"
-                appearance={{
-                  elements: {
-                    userButtonAvatarBox: 'h-8 w-8 border border-champagne/30',
-                  },
+                appearance={clerkAppearance}
+                userProfileProps={{
+                  appearance: clerkAppearance,
                 }}
               />
             </SignedIn>
@@ -167,11 +212,23 @@ export default function Navigation() {
               </motion.a>
             </SignedOut>
             <SignedIn>
+              {isAdmin ? (
+                <motion.a
+                  href="/admin"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ delay: 0.46 }}
+                  className="font-manrope text-[11px] tracking-[0.3em] uppercase text-champagne"
+                  onClick={() => setMenuOpen(false)}
+                >
+                  Admin Panel
+                </motion.a>
+              ) : null}
               <motion.a
                 href="/profile"
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
-                transition={{ delay: 0.46 }}
+                transition={{ delay: 0.49 }}
                 className="font-manrope text-[11px] tracking-[0.3em] uppercase text-champagne"
                 onClick={() => setMenuOpen(false)}
               >

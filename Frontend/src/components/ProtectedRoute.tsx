@@ -1,6 +1,7 @@
 import type { ReactNode } from 'react';
 import { ShieldAlert } from 'lucide-react';
 import { useAuth, useUser } from '@clerk/clerk-react';
+import { isAdminUser } from '../lib/auth-role';
 
 type ProtectedRouteProps = {
   children: ReactNode;
@@ -31,9 +32,7 @@ export default function ProtectedRoute({
     return null;
   }
 
-  const role = String(user?.publicMetadata?.role || user?.publicMetadata?.userRole || '').toUpperCase();
-
-  if (requireAdmin && role !== 'ADMIN') {
+  if (requireAdmin && !isAdminUser(user)) {
     return (
       <main className="min-h-screen bg-void text-beige flex items-center justify-center px-6">
         <section className="glass-card glow-gold max-w-md p-8 text-center">
