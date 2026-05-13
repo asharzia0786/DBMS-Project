@@ -6,10 +6,10 @@ export default function Footer() {
           {/* Brand */}
           <div>
             <div className="font-cormorant text-champagne text-2xl tracking-[0.15em] font-light uppercase mb-3">
-              Zafar & Sons
+              Habib & Sons
             </div>
             <div className="font-manrope text-[9px] tracking-[0.4em] text-beige/30 uppercase mb-6">
-              Master Craftsmen · Lahore
+              Master Craftsmen · Faisalabad
             </div>
             <p className="font-manrope text-xs text-beige/30 leading-relaxed max-w-xs">
               Three generations of master craftsmen creating heirloom furniture for Pakistan's most discerning homes since 1985.
@@ -35,10 +35,10 @@ export default function Footer() {
             <div className="font-manrope text-[9px] tracking-[0.5em] uppercase text-champagne/50 mb-6">Reach Us</div>
             <div className="space-y-3">
               {[
-                { label: 'Workshop', value: '47-B Industrial Estate, Lahore' },
+                { label: 'Workshop', value: '47-B Industrial Estate, Faisalabad' },
                 { label: 'Showroom', value: 'M.M. Alam Road, Gulberg III' },
                 { label: 'Phone', value: '+92 300 123 4567' },
-                { label: 'Email', value: 'studio@zafarandsons.pk' },
+                { label: 'Email', value: 'studio@habibandsons.pk' },
               ].map((item) => (
                 <div key={item.label} className="flex gap-4">
                   <span className="font-manrope text-[9px] tracking-[0.3em] uppercase text-champagne/40 w-16 flex-shrink-0 mt-0.5">
@@ -54,11 +54,11 @@ export default function Footer() {
         {/* Bottom bar */}
         <div className="pt-8 border-t border-champagne/10 flex flex-col md:flex-row items-center justify-between gap-4">
           <span className="font-manrope text-[9px] tracking-[0.3em] uppercase text-beige/20">
-            &copy; 2026 Zafar & Sons. All rights reserved.
+            &copy; 2026 Habib & Sons. All rights reserved.
           </span>
-          <span className="font-manrope text-[9px] tracking-[0.3em] uppercase text-beige/20">
-            Handcrafted in Lahore, Pakistan
-          </span>
+            <span className="font-manrope text-[9px] tracking-[0.3em] uppercase text-beige/20">
+            Handcrafted in Faisalabad, Pakistan
+            </span>
         </div>
       </div>
     </footer>

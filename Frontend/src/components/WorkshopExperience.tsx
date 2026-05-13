@@ -80,7 +80,7 @@ export default function WorkshopExperience() {
                   }}
                   transition={{
                     duration: 5 + i * 0.4,
-                    delay: i * 0.5,
+                    delay: i * 0.08,
                     repeat: Infinity,
                     ease: 'easeInOut',
                   }}
@@ -92,7 +92,7 @@ export default function WorkshopExperience() {
             <div className="absolute bottom-8 left-8 right-8">
               <div className="glass-dark inline-block px-4 py-2">
                 <span className="font-manrope text-[9px] tracking-[0.4em] uppercase text-champagne/70">
-                  Lahore Workshop · Since 1985
+                  Faisalabad Workshop · Since 1985
                 </span>
               </div>
             </div>
@@ -118,7 +118,7 @@ export default function WorkshopExperience() {
             <motion.h2
               initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 1, delay: 0.1 }}
+              transition={{ duration: 0.7, delay: 0.04 }}
               viewport={{ once: true }}
               className="font-playfair text-[clamp(2rem,5vw,3.5rem)] text-beige leading-[1.1] font-normal mb-6"
             >
@@ -132,11 +132,11 @@ export default function WorkshopExperience() {
             <motion.p
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 0.2 }}
+              transition={{ duration: 0.6, delay: 0.08 }}
               viewport={{ once: true }}
               className="font-manrope text-sm text-beige/50 leading-7 mb-12 max-w-md"
             >
-              In our Lahore workshop, three generations of craftsmen work alongside state-of-the-art CNC machinery.
+              In our Faisalabad workshop, three generations of craftsmen work alongside state-of-the-art CNC machinery.
               The result is furniture that carries the warmth of human hands and the exactness of digital precision.
             </motion.p>
 
@@ -147,7 +147,7 @@ export default function WorkshopExperience() {
                   key={step.num}
                   initial={{ opacity: 0, x: 30 }}
                   whileInView={{ opacity: 1, x: 0 }}
-                  transition={{ duration: 0.7, delay: i * 0.1 }}
+                  transition={{ duration: 0.55, delay: i * 0.03 }}
                   viewport={{ once: true }}
                   className="flex gap-6 group"
                 >
@@ -168,7 +168,7 @@ export default function WorkshopExperience() {
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 0.4 }}
+              transition={{ duration: 0.6, delay: 0.1 }}
               viewport={{ once: true }}
               className="grid grid-cols-2 gap-6 pt-10 border-t border-champagne/10"
             >

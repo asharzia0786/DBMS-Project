@@ -132,6 +132,7 @@ export type CreateOrderPayload = {
   type: string;
   totalAmount: number;
   paymentStatus?: string;
+  paymentMethod?: string;
   customerEmail?: string;
 };
 
@@ -156,6 +157,12 @@ export type SafepaySessionResponse = {
   clientToken?: string;
   environment: "sandbox" | "production";
   merchantApiKey: string;
+};
+
+export type CurrentUserResponse = {
+  id: string;
+  clerkId: string;
+  role: string;
 };
 
 export async function request<T>(path: string, init?: RequestInit): Promise<T> {
@@ -349,6 +356,14 @@ export function deleteProduct(token: string, id: string): Promise<{ id: string }
 
 export function getUploadSignature(token: string, folder = "luxury-cnc"): Promise<UploadSignature> {
   return request<UploadSignature>(`/media/upload-signature?folder=${encodeURIComponent(folder)}`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+}
+
+export function syncCurrentUser(token: string): Promise<CurrentUserResponse> {
+  return request<CurrentUserResponse>("/users/me", {
     headers: {
       Authorization: `Bearer ${token}`,
     },

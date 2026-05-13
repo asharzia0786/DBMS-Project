@@ -54,6 +54,7 @@ function ProductCard({ product, index }: { product: ShowcaseProduct; index: numb
   const [hovered, setHovered] = useState(false);
   const [tilt, setTilt] = useState({ x: 0, y: 0 });
   const { addToCart } = useCart();
+  const productUrl = `/products/${product.source.slug}`;
 
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
     const rect = e.currentTarget.getBoundingClientRect();
@@ -66,11 +67,23 @@ function ProductCard({ product, index }: { product: ShowcaseProduct; index: numb
     <motion.div
       initial={{ opacity: 0, y: 60 }}
       whileInView={{ opacity: 1, y: 0 }}
-      transition={{ duration: 1, delay: index * 0.15, ease: [0.16, 1, 0.3, 1] }}
+      transition={{ duration: 0.55, delay: index * 0.02, ease: [0.16, 1, 0.3, 1] }}
       viewport={{ once: true }}
+      role="button"
+      tabIndex={0}
+      aria-label={`View details for ${product.name}`}
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => { setHovered(false); setTilt({ x: 0, y: 0 }); }}
       onMouseMove={handleMouseMove}
+      onClick={() => {
+        window.location.href = productUrl;
+      }}
+      onKeyDown={(event) => {
+        if (event.key === 'Enter' || event.key === ' ') {
+          event.preventDefault();
+          window.location.href = productUrl;
+        }
+      }}
       style={{
         transform: hovered
           ? `perspective(1000px) rotateY(${tilt.x}deg) rotateX(${tilt.y}deg) translateZ(10px)`
@@ -160,13 +173,28 @@ function ProductCard({ product, index }: { product: ShowcaseProduct; index: numb
         <div className="mt-6 flex flex-wrap gap-3 border-t border-champagne/10 pt-6">
           <button
             type="button"
-            onClick={() => addToCart(product.source)}
+            onClick={(event) => {
+              event.stopPropagation();
+              addToCart(product.source);
+            }}
             className="flex items-center gap-2 bg-champagne px-4 py-2 font-manrope text-[10px] uppercase tracking-[0.22em] text-void hover:bg-gold-200"
           >
             <ShoppingBag size={14} />
             Add to cart
           </button>
-          <a href="/custom-order" className="flex items-center gap-2 font-manrope text-[10px] uppercase tracking-[0.28em] text-champagne hover:text-beige">
+          <a
+            href={productUrl}
+            onClick={(event) => event.stopPropagation()}
+            className="flex items-center gap-2 font-manrope text-[10px] uppercase tracking-[0.28em] text-champagne hover:text-beige"
+          >
+            View details
+            <span className="block h-px w-4 bg-current" />
+          </a>
+          <a
+            href="/custom-order"
+            onClick={(event) => event.stopPropagation()}
+            className="flex items-center gap-2 font-manrope text-[10px] uppercase tracking-[0.28em] text-champagne hover:text-beige"
+          >
             Bespoke quote
             <span className="block h-px w-4 bg-current" />
           </a>
@@ -283,12 +311,12 @@ export default function ProductShowcase() {
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.4 }}
+          transition={{ duration: 0.45, delay: 0.04 }}
           viewport={{ once: true }}
           className="text-center mt-20"
         >
           <a
-            href="#contact"
+            href="/collection"
             className="group inline-flex items-center gap-4 font-manrope text-[11px] tracking-[0.4em] uppercase text-champagne border border-champagne/30 px-12 py-4 hover:bg-champagne hover:text-void transition-all duration-500"
           >
             View Full Collection

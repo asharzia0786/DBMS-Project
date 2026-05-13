@@ -5,6 +5,12 @@ import { ArrowLeft, CheckCircle2 } from 'lucide-react';
 import { useCart } from '../contexts/cart';
 import { createOrder, createSafepaySession } from '../lib/api';
 
+const PAYMENT_METHODS = [
+  { value: 'COD', label: 'Cash on delivery' },
+  { value: 'BANK_TRANSFER', label: 'Bank transfer' },
+  { value: 'SAFEPAY', label: 'SafePay' },
+] as const;
+
 function formatCurrency(value: number) {
   return new Intl.NumberFormat('en-PK', {
     style: 'currency',
@@ -23,7 +29,7 @@ export default function Checkout() {
     address: '',
     city: '',
     notes: '',
-    paymentMethod: 'Cash on delivery',
+    paymentMethod: 'COD',
   });
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -48,11 +54,12 @@ export default function Checkout() {
       const order = await createOrder(token, {
         type: items.map((item) => `${item.quantity}x ${item.name}`).join(', '),
         totalAmount: subtotal,
-        paymentStatus: form.paymentMethod,
+        paymentStatus: 'PENDING',
+        paymentMethod: form.paymentMethod,
         customerEmail: user?.primaryEmailAddress?.emailAddress,
       });
 
-      if (form.paymentMethod === 'SafePay') {
+      if (form.paymentMethod === 'SAFEPAY') {
         await createSafepaySession(token, {
           orderId: order.id,
           amount: subtotal,
@@ -131,9 +138,11 @@ export default function Checkout() {
                 onChange={(event) => setForm((current) => ({ ...current, paymentMethod: event.target.value }))}
                 className="mt-2 w-full border border-champagne/15 bg-void/70 px-4 py-3 font-manrope text-sm text-beige outline-none focus:border-champagne"
               >
-                <option>Cash on delivery</option>
-                <option>Bank transfer</option>
-                <option>SafePay</option>
+                {PAYMENT_METHODS.map((method) => (
+                  <option key={method.value} value={method.value}>
+                    {method.label}
+                  </option>
+                ))}
               </select>
             </label>
             <label className="block">

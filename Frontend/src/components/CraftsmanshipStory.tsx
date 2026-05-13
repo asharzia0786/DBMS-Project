@@ -126,7 +126,7 @@ export default function CraftsmanshipStory() {
             <motion.h2
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 0.1 }}
+              transition={{ duration: 0.6, delay: 0.03 }}
               className="font-playfair text-[clamp(2rem,5vw,4rem)] text-beige font-normal"
             >
               Craftsmanship Story

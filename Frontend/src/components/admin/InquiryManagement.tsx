@@ -10,6 +10,7 @@ export default function InquiryManagement() {
   const [error, setError] = useState<string | null>(null);
   const [token, setToken] = useState<string | null>(null);
   const [responses, setResponses] = useState<Record<string, string>>({});
+  const [updatingId, setUpdatingId] = useState<string | null>(null);
 
   const load = useCallback(async (sessionToken?: string | null) => {
     try {
@@ -37,9 +38,14 @@ export default function InquiryManagement() {
 
   async function changeStatus(id: string, status: string, responseMessage?: string) {
     if (!token) return;
-    await updateInquiryStatus(token, id, { status, responseMessage });
-    setResponses((current) => ({ ...current, [id]: '' }));
-    await load(token);
+    setUpdatingId(id);
+    try {
+      await updateInquiryStatus(token, id, { status, responseMessage });
+      setResponses((current) => ({ ...current, [id]: '' }));
+      await load(token);
+    } finally {
+      setUpdatingId(null);
+    }
   }
 
   return (
@@ -62,13 +68,23 @@ export default function InquiryManagement() {
             </div>
             <p className="mt-4 font-manrope text-sm leading-7 text-beige/65">{inquiry.message}</p>
             <div className="mt-5 grid gap-3 lg:grid-cols-[180px_1fr_auto]">
-              <select
-                value={inquiry.status}
-                onChange={(event) => void changeStatus(inquiry.id, event.target.value)}
-                className="border border-champagne/20 bg-void px-3 py-2 font-manrope text-sm text-beige"
-              >
-                {['NEW', 'READ', 'RESPONDED', 'ARCHIVED'].map((status) => <option key={status}>{status}</option>)}
-              </select>
+              <div className="flex flex-wrap gap-2">
+                {['NEW', 'READ', 'RESPONDED', 'ARCHIVED'].map((status) => (
+                  <button
+                    key={status}
+                    type="button"
+                    onClick={() => void changeStatus(inquiry.id, status)}
+                    disabled={updatingId === inquiry.id || inquiry.status === status}
+                    className={`border px-3 py-2 font-manrope text-[10px] uppercase tracking-[0.18em] transition-colors disabled:opacity-50 ${
+                      inquiry.status === status
+                        ? 'border-champagne bg-champagne text-void'
+                        : 'border-champagne/20 text-beige/70 hover:border-champagne/45 hover:text-champagne'
+                    }`}
+                  >
+                    {status}
+                  </button>
+                ))}
+              </div>
               <input
                 value={responses[inquiry.id] || ''}
                 onChange={(event) => setResponses((current) => ({ ...current, [inquiry.id]: event.target.value }))}
@@ -78,7 +94,8 @@ export default function InquiryManagement() {
               <button
                 type="button"
                 onClick={() => void changeStatus(inquiry.id, 'RESPONDED', responses[inquiry.id])}
-                className="bg-champagne px-4 py-2 font-manrope text-[11px] uppercase tracking-[0.2em] text-void"
+                disabled={updatingId === inquiry.id}
+                className="bg-champagne px-4 py-2 font-manrope text-[11px] uppercase tracking-[0.2em] text-void disabled:opacity-50"
               >
                 Send response
               </button>

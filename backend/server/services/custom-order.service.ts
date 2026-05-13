@@ -1,11 +1,7 @@
 import { CustomOrderRepository } from "../repositories/custom-order.repository";
 import { NotificationService } from "./notification.service";
-import {
-  CUSTOM_ORDER_TRANSITIONS,
-  type CustomOrderStatus,
-} from "../types/workflow";
+import { type CustomOrderStatus } from "../types/workflow";
 import { AppError } from "../utils/app-error";
-import { assertStateTransition } from "../utils/state-machine";
 import type { CustomOrderListQuery } from "../validators/custom-order.validator";
 
 export class CustomOrderService {
@@ -70,29 +66,6 @@ export class CustomOrderService {
     const order = await this.customOrderRepository.findById(input.id);
     if (!order) {
       throw new AppError("Custom order not found.", "CUSTOM_ORDER_NOT_FOUND", 404);
-    }
-
-    assertStateTransition(
-      order.status as CustomOrderStatus,
-      input.status,
-      CUSTOM_ORDER_TRANSITIONS,
-      "custom order",
-    );
-
-    if (input.status === "QUOTED" && !input.quotedPrice) {
-      throw new AppError(
-        "quotedPrice is required when status is QUOTED.",
-        "QUOTED_PRICE_REQUIRED",
-        400,
-      );
-    }
-
-    if (input.status === "APPROVED" && !order.quotedPrice) {
-      throw new AppError(
-        "Custom order must be quoted before approval.",
-        "QUOTE_REQUIRED_BEFORE_APPROVAL",
-        400,
-      );
     }
 
     const updated = await this.customOrderRepository.updateStatus(

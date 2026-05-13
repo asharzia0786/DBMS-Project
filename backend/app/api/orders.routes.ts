@@ -50,6 +50,7 @@ router.post(
       type: payload.type,
       totalAmount: payload.totalAmount,
       paymentStatus: payload.paymentStatus,
+      paymentMethod: payload.paymentMethod,
     });
     return sendSuccess(res, data, 201);
   }),

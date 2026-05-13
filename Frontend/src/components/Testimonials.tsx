@@ -17,7 +17,7 @@ const TESTIMONIALS = [
     initial: 'F',
   },
   {
-    quote: 'The Alhambra dining suite seats twelve and commands every dinner conversation before the food is even served. Zafar & Sons does not make furniture — they make architecture for the home.',
+    quote: 'The Alhambra dining suite seats twelve and commands every dinner conversation before the food is even served. Habib & Sons does not make furniture — they make architecture for the home.',
     name: 'Sana Malik',
     title: 'Architect, NESPAK',
     location: 'Gulberg III, Lahore',

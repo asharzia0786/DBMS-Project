@@ -1,27 +1,27 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { motion, useMotionValue, useScroll, useSpring, useTransform } from 'framer-motion';
 import { ChevronDown } from 'lucide-react';
+import { fetchProducts } from '../lib/api';
 
-const BED_SHEET = '/assets/bed-objects.png';
+const HERO_FALLBACK_IMAGES = [
+  'https://images.pexels.com/photos/4846097/pexels-photo-4846097.jpeg?auto=compress&cs=tinysrgb&w=1400',
+  'https://images.pexels.com/photos/6580229/pexels-photo-6580229.jpeg?auto=compress&cs=tinysrgb&w=1200',
+  'https://images.pexels.com/photos/6580235/pexels-photo-6580235.jpeg?auto=compress&cs=tinysrgb&w=1200',
+  'https://images.pexels.com/photos/1571468/pexels-photo-1571468.jpeg?auto=compress&cs=tinysrgb&w=1200',
+];
 
 const DETAIL_FLOATS = [
   {
     className: 'left-[4%] top-[18%] w-[22vw] max-w-[330px]',
-    backgroundSize: '327% 375%',
-    backgroundPosition: '100% 46%',
-    delay: 0.2,
+    delay: 0.05,
   },
   {
     className: 'right-[5%] top-[16%] w-[24vw] max-w-[360px]',
-    backgroundSize: '251% 252%',
-    backgroundPosition: '100% 0%',
-    delay: 0.45,
+    delay: 0.1,
   },
   {
     className: 'right-[9%] bottom-[13%] w-[18vw] max-w-[280px]',
-    backgroundSize: '327% 298%',
-    backgroundPosition: '100% 100%',
-    delay: 0.7,
+    delay: 0.15,
   },
 ];
 
@@ -29,6 +29,7 @@ export default function Hero() {
   const containerRef = useRef<HTMLDivElement>(null);
   const mouseX = useMotionValue(0);
   const mouseY = useMotionValue(0);
+  const [heroImages, setHeroImages] = useState(HERO_FALLBACK_IMAGES);
 
   const { scrollYProgress } = useScroll({
     target: containerRef,
@@ -53,6 +54,31 @@ export default function Hero() {
     return () => window.removeEventListener('mousemove', handleMouseMove);
   }, [mouseX, mouseY]);
 
+  useEffect(() => {
+    let active = true;
+
+    const loadHeroImages = async () => {
+      try {
+        const response = await fetchProducts(1, 8);
+        const productImages = response.items
+          .map((item) => item.images[0]?.imageUrl)
+          .filter((url): url is string => Boolean(url))
+          .slice(0, 4);
+
+        if (active && productImages.length >= 3) {
+          setHeroImages(productImages.length === 4 ? productImages : [...productImages, HERO_FALLBACK_IMAGES[3]]);
+        }
+      } catch {
+        // Keep fallback images when live catalog is unavailable.
+      }
+    };
+
+    void loadHeroImages();
+    return () => {
+      active = false;
+    };
+  }, []);
+
   return (
     <section
       ref={containerRef}
@@ -66,11 +92,9 @@ export default function Hero() {
         style={{ y: bedY, scale: bedScale, x: springX }}
       >
         <div
-          className="h-full w-full bg-no-repeat"
+          className="h-full w-full bg-cover bg-center"
           style={{
-            backgroundImage: `url("${BED_SHEET}")`,
-            backgroundSize: '166% 165%',
-            backgroundPosition: '0% 0%',
+            backgroundImage: `url("${heroImages[0]}")`,
           }}
         />
       </motion.div>
@@ -82,12 +106,12 @@ export default function Hero() {
         className="absolute inset-0 hidden lg:block"
         style={{ rotate: orbitRotate, transformStyle: 'preserve-3d' }}
       >
-        {DETAIL_FLOATS.map((detail) => (
+        {DETAIL_FLOATS.map((detail, index) => (
           <motion.div
             key={detail.className}
             initial={{ opacity: 0, y: 40, rotateY: -22 }}
             animate={{ opacity: 1, y: 0, rotateY: 0 }}
-            transition={{ duration: 1.4, delay: detail.delay, ease: [0.16, 1, 0.3, 1] }}
+            transition={{ duration: 0.9, delay: detail.delay, ease: [0.16, 1, 0.3, 1] }}
             className={`absolute overflow-hidden border border-champagne/15 bg-walnut-900/60 shadow-[0_40px_90px_rgba(0,0,0,0.45)] ${detail.className}`}
             style={{
               aspectRatio: '1.45 / 1',
@@ -96,12 +120,8 @@ export default function Hero() {
             }}
           >
             <div
-              className="h-full w-full bg-no-repeat"
-              style={{
-                backgroundImage: `url("${BED_SHEET}")`,
-                backgroundSize: detail.backgroundSize,
-                backgroundPosition: detail.backgroundPosition,
-              }}
+              className="h-full w-full bg-cover bg-center"
+              style={{ backgroundImage: `url("${heroImages[index + 1] || heroImages[0]}")` }}
             />
             <div className="absolute inset-0 bg-gradient-to-t from-void/35 to-transparent" />
           </motion.div>
@@ -115,12 +135,12 @@ export default function Hero() {
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.9, delay: 0.45 }}
+          transition={{ duration: 0.6, delay: 0.1 }}
           className="mb-7 flex items-center justify-center gap-4"
         >
           <div className="h-px w-16 bg-gradient-to-r from-transparent to-champagne/60" />
           <span className="font-manrope text-[10px] uppercase tracking-[0.5em] text-champagne/75">
-            CNC carved bed objects
+            Faisalabad Workshop · Since 1985
           </span>
           <div className="h-px w-16 bg-gradient-to-l from-transparent to-champagne/60" />
         </motion.div>
@@ -128,34 +148,35 @@ export default function Hero() {
         <motion.h1
           initial={{ opacity: 0, y: 38 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 1.25, delay: 0.7, ease: [0.16, 1, 0.3, 1] }}
+          transition={{ duration: 0.9, delay: 0.16, ease: [0.16, 1, 0.3, 1] }}
           className="font-playfair text-[clamp(3.6rem,11vw,9.4rem)] font-normal leading-[0.84] text-beige"
         >
-          Sculpted
+          Crafted
           <br />
-          <span className="italic text-gradient-gold">in motion</span>
+          <span className="italic text-gradient-gold">for real spaces</span>
         </motion.h1>
 
         <motion.p
           initial={{ opacity: 0, y: 24 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 1, delay: 1 }}
+          transition={{ duration: 0.7, delay: 0.22 }}
           className="mx-auto mt-8 max-w-xl font-cormorant text-[clamp(1.1rem,2.4vw,1.55rem)] font-light tracking-wide text-beige/62"
         >
-          A cinematic object-scroll showroom for carved walnut beds, macro details, and CNC ornament.
+          Habib & Sons designs retail-ready furniture, wall decor, and custom CNC pieces for homes,
+          offices, and hospitality interiors across Pakistan.
         </motion.p>
 
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.9, delay: 1.25 }}
+          transition={{ duration: 0.65, delay: 0.28 }}
           className="mt-11 flex flex-col items-center justify-center gap-4 sm:flex-row"
         >
           <a
             href="#craftsmanship"
             className="group relative overflow-hidden bg-champagne px-10 py-4 font-manrope text-[11px] uppercase tracking-[0.35em] text-void transition-all duration-500 hover:bg-gold-200"
           >
-            <span className="relative z-10">Start Scroll</span>
+            <span className="relative z-10">Our Process</span>
             <div className="absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-white/25 to-transparent transition-transform duration-700 group-hover:translate-x-full" />
           </a>
           <a
@@ -170,7 +191,7 @@ export default function Hero() {
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
-        transition={{ delay: 1.8, duration: 1 }}
+        transition={{ delay: 0.4, duration: 0.6 }}
         className="absolute bottom-9 left-1/2 z-10 flex -translate-x-1/2 flex-col items-center gap-2"
       >
         <span className="font-manrope text-[9px] uppercase tracking-[0.4em] text-beige/40">Scroll</span>

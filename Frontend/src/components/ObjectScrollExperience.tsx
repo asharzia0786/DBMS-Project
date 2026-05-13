@@ -80,7 +80,7 @@ const DETAIL_PLATES = [
 
 function stageWindow(index: number) {
   const step = 1 / STAGES.length;
-  const overlap = step * 0.34;
+  const overlap = step * 0.42;
   const start = Math.max(0, index * step - overlap);
   const center = index * step + step * 0.5;
   const end = Math.min(1, (index + 1) * step + overlap);
@@ -106,12 +106,12 @@ function ProductFrame({
     [start, fadeInEnd, fadeOutStart, end],
     [index === 0 ? 1 : 0, 1, 1, index === STAGES.length - 1 ? 1 : 0],
   );
-  const scale = useTransform(progress, [start, center, end], [0.72, 1, index === STAGES.length - 1 ? 1.12 : 0.82]);
-  const rotateY = useTransform(progress, [start, center, end], [index % 2 === 0 ? -34 : 32, 0, index % 2 === 0 ? 24 : -28]);
-  const rotateX = useTransform(progress, [start, center, end], [12, 0, -10]);
-  const y = useTransform(progress, [start, center, end], [110, 0, -95]);
-  const x = useTransform(progress, [start, center, end], [index % 2 === 0 ? -80 : 80, 0, index % 2 === 0 ? 55 : -55]);
-  const blur = useTransform(progress, [start, start + 0.04, end - 0.04, end], [12, 0, 0, 10]);
+  const scale = useTransform(progress, [start, center, end], [0.82, 1, index === STAGES.length - 1 ? 1.04 : 0.9]);
+  const rotateY = useTransform(progress, [start, center, end], [index % 2 === 0 ? -24 : 22, 0, index % 2 === 0 ? 14 : -16]);
+  const rotateX = useTransform(progress, [start, center, end], [8, 0, -6]);
+  const y = useTransform(progress, [start, center, end], [70, 0, -45]);
+  const x = useTransform(progress, [start, center, end], [index % 2 === 0 ? -45 : 45, 0, index % 2 === 0 ? 30 : -30]);
+  const blur = useTransform(progress, [start, start + 0.035, end - 0.035, end], [8, 0, 0, 6]);
   const filter = useTransform(blur, (value) => `drop-shadow(0 55px 90px rgba(0,0,0,0.64)) blur(${value}px)`);
 
   return (
@@ -171,8 +171,8 @@ function StageCopy({
   progress: MotionValue<number>;
 }) {
   const { start, end } = stageWindow(index);
-  const opacity = useTransform(progress, [start, start + 0.05, end - 0.06, end], [0, 1, 1, 0]);
-  const y = useTransform(progress, [start, start + 0.08, end], [28, 0, -22]);
+  const opacity = useTransform(progress, [start, start + 0.03, end - 0.025, end], [0, 1, 1, 0]);
+  const y = useTransform(progress, [start, start + 0.05, end], [16, 0, -10]);
 
   return (
     <motion.div
@@ -211,7 +211,7 @@ export default function ObjectScrollExperience() {
       ref={sectionRef}
       id="craftsmanship"
       className="relative bg-void"
-      style={{ height: `${STAGES.length * 88}vh` }}
+      style={{ height: `${STAGES.length * 62}vh` }}
     >
       <div className="sticky top-0 h-screen overflow-hidden">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_38%,rgba(212,175,114,0.18),transparent_31%),linear-gradient(180deg,#050403_0%,#140b05_50%,#050403_100%)]" />

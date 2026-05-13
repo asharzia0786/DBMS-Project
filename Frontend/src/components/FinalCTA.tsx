@@ -10,7 +10,7 @@ const CTA_PARTICLES = Array.from({ length: 18 }, (_, i) => ({
   y: 60 + Math.random() * 40,
   size: Math.random() * 2.5 + 0.5,
   duration: Math.random() * 7 + 5,
-  delay: Math.random() * 4,
+  delay: Math.random() * 0.6,
 }));
 
 export default function FinalCTA() {
@@ -109,7 +109,7 @@ export default function FinalCTA() {
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 0.2 }}
+              transition={{ duration: 0.55, delay: 0.05 }}
               viewport={{ once: true }}
               className="flex items-center justify-center gap-4 mb-8"
             >
@@ -124,7 +124,7 @@ export default function FinalCTA() {
             <motion.h2
               initial={{ opacity: 0, y: 40 }}
               whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 1.2, delay: 0.3, ease: [0.16, 1, 0.3, 1] }}
+              transition={{ duration: 0.85, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
               viewport={{ once: true }}
               className="font-playfair text-[clamp(3rem,9vw,7rem)] font-normal leading-[0.95] text-beige mb-8"
             >
@@ -138,7 +138,7 @@ export default function FinalCTA() {
             <motion.p
               initial={{ opacity: 0 }}
               whileInView={{ opacity: 1 }}
-              transition={{ duration: 1, delay: 0.6 }}
+              transition={{ duration: 0.55, delay: 0.08 }}
               viewport={{ once: true }}
               className="font-cormorant text-xl text-beige/50 font-light italic mb-12 max-w-md mx-auto leading-relaxed"
             >
@@ -148,7 +148,7 @@ export default function FinalCTA() {
             <motion.button
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 0.8 }}
+              transition={{ duration: 0.45, delay: 0.12 }}
               viewport={{ once: true }}
               onClick={() => setFormOpen(true)}
               className="group relative font-manrope text-[11px] tracking-[0.4em] uppercase px-14 py-5 bg-champagne text-void hover:bg-gold-200 transition-all duration-500 overflow-hidden glow-gold"
@@ -161,7 +161,7 @@ export default function FinalCTA() {
             <motion.div
               initial={{ opacity: 0 }}
               whileInView={{ opacity: 1 }}
-              transition={{ duration: 0.8, delay: 1 }}
+              transition={{ duration: 0.45, delay: 0.15 }}
               viewport={{ once: true }}
               className="flex items-center justify-center gap-8 mt-14"
             >

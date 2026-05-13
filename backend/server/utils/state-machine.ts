@@ -10,7 +10,10 @@ export function assertStateTransition<TState extends string>(
     return;
   }
 
-  if (!allowed[current]?.includes(next)) {
+  const knownCurrent = Object.prototype.hasOwnProperty.call(allowed, current);
+  const knownNext = Object.prototype.hasOwnProperty.call(allowed, next);
+
+  if (!knownCurrent || !knownNext) {
     throw new AppError(
       `Invalid ${label} transition: ${current} -> ${next}.`,
       "INVALID_STATE_TRANSITION",

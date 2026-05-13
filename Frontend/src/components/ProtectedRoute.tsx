@@ -1,7 +1,8 @@
-import type { ReactNode } from 'react';
+import { useEffect, useState, type ReactNode } from 'react';
 import { ShieldAlert } from 'lucide-react';
 import { useAuth, useUser } from '@clerk/clerk-react';
 import { isAdminUser } from '../lib/auth-role';
+import { syncCurrentUser } from '../lib/api';
 
 type ProtectedRouteProps = {
   children: ReactNode;
@@ -14,8 +15,39 @@ export default function ProtectedRoute({
   requireAdmin = false,
   redirectTo = '/login',
 }: ProtectedRouteProps) {
-  const { isLoaded, isSignedIn } = useAuth();
+  const { getToken, isLoaded, isSignedIn } = useAuth();
   const { user } = useUser();
+  const [isBackendAdmin, setIsBackendAdmin] = useState<boolean | null>(null);
+  const isClerkAdmin = isAdminUser(user);
+
+  useEffect(() => {
+    if (!requireAdmin || !isLoaded || !isSignedIn || isClerkAdmin) {
+      setIsBackendAdmin(null);
+      return;
+    }
+
+    let active = true;
+    void (async () => {
+      try {
+        const token = await getToken();
+        if (!token || !active) {
+          return;
+        }
+        const currentUser = await syncCurrentUser(token);
+        if (active) {
+          setIsBackendAdmin(String(currentUser.role).toUpperCase() === 'ADMIN');
+        }
+      } catch {
+        if (active) {
+          setIsBackendAdmin(false);
+        }
+      }
+    })();
+
+    return () => {
+      active = false;
+    };
+  }, [getToken, isClerkAdmin, isLoaded, isSignedIn, requireAdmin]);
 
   if (!isLoaded) {
     return (
@@ -32,7 +64,17 @@ export default function ProtectedRoute({
     return null;
   }
 
-  if (requireAdmin && !isAdminUser(user)) {
+  if (requireAdmin && !isClerkAdmin && isBackendAdmin === null) {
+    return (
+      <main className="min-h-screen bg-void text-beige flex items-center justify-center px-6">
+        <p className="font-manrope text-[11px] uppercase tracking-[0.28em] text-beige/60">
+          Checking admin access
+        </p>
+      </main>
+    );
+  }
+
+  if (requireAdmin && !isClerkAdmin && !isBackendAdmin) {
     return (
       <main className="min-h-screen bg-void text-beige flex items-center justify-center px-6">
         <section className="glass-card glow-gold max-w-md p-8 text-center">

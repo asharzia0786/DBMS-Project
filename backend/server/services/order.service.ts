@@ -1,8 +1,7 @@
 import { OrderRepository } from "../repositories/order.repository";
 import { NotificationService } from "./notification.service";
-import { ORDER_TRANSITIONS, type OrderStatus } from "../types/workflow";
+import type { OrderStatus } from "../types/workflow";
 import { AppError } from "../utils/app-error";
-import { assertStateTransition } from "../utils/state-machine";
 import type { OrderListQuery } from "../validators/order.validator";
 
 export class OrderService {
@@ -46,6 +45,7 @@ export class OrderService {
     type: string;
     totalAmount: number;
     paymentStatus: string;
+    paymentMethod?: string;
   }) {
     return this.orderRepository.create({
       user: { connect: { id: input.userId } },
@@ -53,6 +53,7 @@ export class OrderService {
       type: input.type,
       totalAmount: input.totalAmount,
       paymentStatus: input.paymentStatus,
+      paymentMethod: input.paymentMethod,
       status: "PENDING",
     }).then(async (order) => {
       if (order.customerEmail && this.notificationService) {
@@ -76,13 +77,6 @@ export class OrderService {
     if (!order) {
       throw new AppError("Order not found.", "ORDER_NOT_FOUND", 404);
     }
-
-    assertStateTransition(
-      order.status as OrderStatus,
-      input.status,
-      ORDER_TRANSITIONS,
-      "order",
-    );
 
     const updated = await this.orderRepository.updateStatus(input.id, input.status);
     if (updated.customerEmail && this.notificationService) {
