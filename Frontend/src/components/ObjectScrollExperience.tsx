@@ -14,15 +14,15 @@ type Stage = {
 const STAGES: Stage[] = [
   {
     id: 'front',
-    image: '/assets/bed-crops/front-bed.webp',
+    image: '/assets/product-crops/carved-circle-front.webp',
     kicker: '01 / Establish',
-    title: 'One carved bed. Locked to scroll.',
+    title: 'Carved geometry. Locked to scroll.',
     note: 'A frontal hero pass keeps the object centered while the camera begins to move.',
     widthClass: 'w-[min(92vw,980px)]',
   },
   {
     id: 'angle',
-    image: '/assets/bed-crops/angled-bed.webp',
+    image: '/assets/product-crops/carved-circle-angle.webp',
     kicker: '02 / Orbit',
     title: 'The room rotates around the silhouette.',
     note: 'The object turns from catalog symmetry into an interior-scale product shot.',
@@ -30,25 +30,25 @@ const STAGES: Stage[] = [
   },
   {
     id: 'macro',
-    image: '/assets/bed-crops/headboard-macro.webp',
+    image: '/assets/product-crops/carved-circle-detail.webp',
     kicker: '03 / Macro',
     title: 'Scroll into the CNC relief.',
-    note: 'The headboard becomes a carved surface study: highlights, shadows, and ornament.',
+    note: 'The carved surface becomes a study: highlights, shadows, and ornament.',
     widthClass: 'w-[min(88vw,900px)]',
   },
   {
     id: 'side',
-    image: '/assets/bed-crops/side-profile.webp',
+    image: '/assets/product-crops/living-room-front.webp',
     kicker: '04 / Profile',
     title: 'The form slides into profile.',
-    note: 'A lower camera pass reveals usable proportions and bedside presence.',
+    note: 'A lower camera pass reveals usable proportions and interior presence.',
     widthClass: 'w-[min(74vw,700px)]',
   },
   {
     id: 'footboard',
-    image: '/assets/bed-crops/footboard.webp',
+    image: '/assets/product-crops/living-room-angle.webp',
     kicker: '05 / Detail',
-    title: 'The footboard resolves the craft.',
+    title: 'Living room craft, resolved.',
     note: 'Deep walnut panels and floral carving close the object from every angle.',
     widthClass: 'w-[min(86vw,820px)]',
   },
@@ -56,21 +56,21 @@ const STAGES: Stage[] = [
 
 const DETAIL_PLATES = [
   {
-    image: '/assets/bed-crops/post-detail.webp',
+    image: '/assets/product-crops/carved-circle-macro.webp',
     className: 'left-[8%] top-[18%] w-[18vw] max-w-[260px]',
     range: [0.1, 0.42, 0.68],
     travel: [-90, 0, 70],
     rotate: [-24, 0, 16],
   },
   {
-    image: '/assets/bed-crops/headboard-macro.webp',
+    image: '/assets/product-crops/carved-circle-detail.webp',
     className: 'right-[7%] top-[22%] w-[24vw] max-w-[340px]',
     range: [0.24, 0.52, 0.86],
     travel: [90, 0, -80],
     rotate: [22, 0, -18],
   },
   {
-    image: '/assets/bed-crops/footboard.webp',
+    image: '/assets/product-crops/living-room-detail.webp',
     className: 'right-[12%] bottom-[13%] w-[22vw] max-w-[330px]',
     range: [0.48, 0.72, 1],
     travel: [120, 0, -55],
@@ -80,7 +80,7 @@ const DETAIL_PLATES = [
 
 function stageWindow(index: number) {
   const step = 1 / STAGES.length;
-  const overlap = step * 0.42;
+  const overlap = step * 0.62;
   const start = Math.max(0, index * step - overlap);
   const center = index * step + step * 0.5;
   const end = Math.min(1, (index + 1) * step + overlap);
@@ -99,8 +99,8 @@ function ProductFrame({
 }) {
   const { start, center, end } = stageWindow(index);
 
-  const fadeInEnd = index === 0 ? 0 : start + 0.045;
-  const fadeOutStart = index === STAGES.length - 1 ? 1 : end - 0.055;
+  const fadeInEnd = index === 0 ? 0 : start + 0.025;
+  const fadeOutStart = index === STAGES.length - 1 ? 1 : end - 0.03;
   const opacity = useTransform(
     progress,
     [start, fadeInEnd, fadeOutStart, end],
@@ -111,7 +111,7 @@ function ProductFrame({
   const rotateX = useTransform(progress, [start, center, end], [8, 0, -6]);
   const y = useTransform(progress, [start, center, end], [70, 0, -45]);
   const x = useTransform(progress, [start, center, end], [index % 2 === 0 ? -45 : 45, 0, index % 2 === 0 ? 30 : -30]);
-  const blur = useTransform(progress, [start, start + 0.035, end - 0.035, end], [8, 0, 0, 6]);
+  const blur = useTransform(progress, [start, start + 0.018, end - 0.018, end], [8, 0, 0, 6]);
   const filter = useTransform(blur, (value) => `drop-shadow(0 55px 90px rgba(0,0,0,0.64)) blur(${value}px)`);
 
   return (
@@ -145,7 +145,7 @@ function DetailPlate({
   plate: (typeof DETAIL_PLATES)[number];
   progress: MotionValue<number>;
 }) {
-  const opacity = useTransform(progress, [plate.range[0], plate.range[0] + 0.05, plate.range[1], plate.range[2]], [0, 1, 1, 0]);
+  const opacity = useTransform(progress, [plate.range[0], plate.range[0] + 0.025, plate.range[1], plate.range[2]], [0, 1, 1, 0]);
   const y = useTransform(progress, plate.range, plate.travel);
   const rotateY = useTransform(progress, plate.range, plate.rotate);
   const scale = useTransform(progress, plate.range, [0.82, 1, 0.9]);
@@ -171,8 +171,8 @@ function StageCopy({
   progress: MotionValue<number>;
 }) {
   const { start, end } = stageWindow(index);
-  const opacity = useTransform(progress, [start, start + 0.03, end - 0.025, end], [0, 1, 1, 0]);
-  const y = useTransform(progress, [start, start + 0.05, end], [16, 0, -10]);
+  const opacity = useTransform(progress, [start, start + 0.015, end - 0.012, end], [0, 1, 1, 0]);
+  const y = useTransform(progress, [start, start + 0.025, end], [16, 0, -10]);
 
   return (
     <motion.div
@@ -211,7 +211,7 @@ export default function ObjectScrollExperience() {
       ref={sectionRef}
       id="craftsmanship"
       className="relative bg-void"
-      style={{ height: `${STAGES.length * 62}vh` }}
+      style={{ height: `${STAGES.length * 48}vh` }}
     >
       <div className="sticky top-0 h-screen overflow-hidden">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_38%,rgba(212,175,114,0.18),transparent_31%),linear-gradient(180deg,#050403_0%,#140b05_50%,#050403_100%)]" />
@@ -244,7 +244,7 @@ export default function ObjectScrollExperience() {
             }}
           >
             <img
-              src="/assets/bed-crops/front-bed.webp"
+              src="/assets/product-crops/carved-circle-front.webp"
               alt=""
               className="w-[min(92vw,980px)] select-none object-contain"
               draggable={false}
