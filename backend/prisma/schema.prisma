@@ -47,6 +47,7 @@ model ProductImage {
 model CustomOrder {
   id              String   @id @default(uuid())
   userId          String
+  customerEmail   String?
   description     String
   referenceImages String[]
   dimensions      String?
@@ -64,15 +65,20 @@ model CustomOrder {
 model Order {
   id            String   @id @default(uuid())
   userId        String
+  customerEmail String?
   type          String
   totalAmount   Int
   paymentStatus String
+  paymentMethod String?
+  safepayTrackerToken String?
+  paidAt        DateTime?
   status        String
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
   user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId, status])
+  @@index([safepayTrackerToken])
   @@index([createdAt])
 }
 

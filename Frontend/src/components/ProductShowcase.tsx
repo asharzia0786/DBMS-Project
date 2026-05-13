@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { motion, useScroll, useTransform } from 'framer-motion';
-import { ArrowRight } from 'lucide-react';
+import { ArrowRight, ShoppingBag } from 'lucide-react';
+import { useCart } from '../contexts/cart';
 import { fetchProducts, type Product } from '../lib/api';
 
 type ShowcaseProduct = {
@@ -14,6 +15,7 @@ type ShowcaseProduct = {
   image: string;
   imagePosition?: string;
   featured: boolean;
+  source: Product;
 };
 
 const FALLBACK_PRODUCTS: ShowcaseProduct[] = [];
@@ -39,15 +41,19 @@ function mapToShowcaseProduct(product: Product, index: number): ShowcaseProduct 
     desc:
       product.description ||
       'Handcrafted by our master artisans with precision CNC detailing and premium finishing.',
-    image: product.images[0]?.imageUrl || FALLBACK_PRODUCTS[index % FALLBACK_PRODUCTS.length].image,
-    imagePosition: product.images[0]?.imageUrl ? '50% 50%' : FALLBACK_PRODUCTS[index % FALLBACK_PRODUCTS.length].imagePosition,
+    image:
+      product.images[0]?.imageUrl ||
+      'https://images.pexels.com/photos/5825527/pexels-photo-5825527.jpeg?auto=compress&cs=tinysrgb&w=1200',
+    imagePosition: product.images[0]?.imageUrl ? '50% 50%' : '50% 50%',
     featured: index === 0,
+    source: product,
   };
 }
 
 function ProductCard({ product, index }: { product: ShowcaseProduct; index: number }) {
   const [hovered, setHovered] = useState(false);
   const [tilt, setTilt] = useState({ x: 0, y: 0 });
+  const { addToCart } = useCart();
 
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
     const rect = e.currentTarget.getBoundingClientRect();
@@ -151,11 +157,19 @@ function ProductCard({ product, index }: { product: ShowcaseProduct; index: numb
           </div>
         </div>
 
-        <div className="mt-6 pt-6 border-t border-champagne/10">
-          <button className="font-manrope text-[10px] tracking-[0.35em] uppercase text-champagne hover:text-beige transition-colors duration-300 flex items-center gap-2">
-            Request Bespoke Quote
-            <span className="block w-4 h-px bg-current" />
+        <div className="mt-6 flex flex-wrap gap-3 border-t border-champagne/10 pt-6">
+          <button
+            type="button"
+            onClick={() => addToCart(product.source)}
+            className="flex items-center gap-2 bg-champagne px-4 py-2 font-manrope text-[10px] uppercase tracking-[0.22em] text-void hover:bg-gold-200"
+          >
+            <ShoppingBag size={14} />
+            Add to cart
           </button>
+          <a href="/custom-order" className="flex items-center gap-2 font-manrope text-[10px] uppercase tracking-[0.28em] text-champagne hover:text-beige">
+            Bespoke quote
+            <span className="block h-px w-4 bg-current" />
+          </a>
         </div>
       </div>
     </motion.div>

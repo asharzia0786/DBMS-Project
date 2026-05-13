@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react';
+import { SignedIn, SignedOut, UserButton } from '@clerk/clerk-react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Menu, X } from 'lucide-react';
+import { LogIn, Menu, ShoppingBag, UserRound, X } from 'lucide-react';
+import { useCart } from '../contexts/cart';
 
 const navLinks = [
   { label: 'Collection', href: '#collection' },
@@ -12,6 +14,7 @@ const navLinks = [
 export default function Navigation() {
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
+  const { itemCount } = useCart();
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 80);
@@ -57,6 +60,44 @@ export default function Navigation() {
             >
               Book Consultation
             </a>
+            <a
+              href="/cart"
+              className="relative inline-flex items-center gap-2 font-manrope text-[10px] tracking-[0.24em] uppercase text-beige/70 hover:text-champagne transition-colors duration-300"
+            >
+              <ShoppingBag size={15} />
+              Cart
+              {itemCount > 0 ? (
+                <span className="absolute -right-3 -top-3 flex h-5 min-w-5 items-center justify-center rounded-full bg-champagne px-1 text-[10px] text-void">
+                  {itemCount}
+                </span>
+              ) : null}
+            </a>
+            <SignedOut>
+              <a
+                href="/login"
+                className="inline-flex items-center gap-2 font-manrope text-[10px] tracking-[0.24em] uppercase text-beige/70 hover:text-champagne transition-colors duration-300"
+              >
+                <LogIn size={15} />
+                Login
+              </a>
+            </SignedOut>
+            <SignedIn>
+              <a
+                href="/profile"
+                className="inline-flex items-center gap-2 font-manrope text-[10px] tracking-[0.24em] uppercase text-beige/70 hover:text-champagne transition-colors duration-300"
+              >
+                <UserRound size={15} />
+                Profile
+              </a>
+              <UserButton
+                afterSignOutUrl="/"
+                appearance={{
+                  elements: {
+                    userButtonAvatarBox: 'h-8 w-8 border border-champagne/30',
+                  },
+                }}
+              />
+            </SignedIn>
           </div>
 
           {/* Mobile Menu Toggle */}
@@ -103,6 +144,40 @@ export default function Navigation() {
             >
               Book Consultation
             </motion.a>
+            <motion.a
+              href="/cart"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.43 }}
+              className="font-manrope text-[11px] tracking-[0.3em] uppercase text-champagne"
+              onClick={() => setMenuOpen(false)}
+            >
+              Cart {itemCount > 0 ? `(${itemCount})` : ''}
+            </motion.a>
+            <SignedOut>
+              <motion.a
+                href="/login"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 0.46 }}
+                className="font-manrope text-[11px] tracking-[0.3em] uppercase text-champagne"
+                onClick={() => setMenuOpen(false)}
+              >
+                Login
+              </motion.a>
+            </SignedOut>
+            <SignedIn>
+              <motion.a
+                href="/profile"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 0.46 }}
+                className="font-manrope text-[11px] tracking-[0.3em] uppercase text-champagne"
+                onClick={() => setMenuOpen(false)}
+              >
+                Profile
+              </motion.a>
+            </SignedIn>
           </motion.div>
         )}
       </AnimatePresence>

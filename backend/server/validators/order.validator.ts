@@ -6,6 +6,7 @@ export const createOrderSchema = z.object({
   type: z.string().trim().min(1),
   totalAmount: z.number().int().positive(),
   paymentStatus: z.string().trim().min(1).default("PENDING"),
+  customerEmail: z.string().trim().email().optional(),
 });
 
 export const orderListQuerySchema = z.object({

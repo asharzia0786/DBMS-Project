@@ -9,6 +9,7 @@ import { InquiryService } from "./services/inquiry.service";
 import { MediaService } from "./services/media.service";
 import { NotificationService } from "./services/notification.service";
 import { OrderService } from "./services/order.service";
+import { PaymentService } from "./services/payment.service";
 import { ProductService } from "./services/product.service";
 import { UserService } from "./services/user.service";
 
@@ -17,14 +18,16 @@ const productRepository = new ProductRepository();
 const customOrderRepository = new CustomOrderRepository();
 const orderRepository = new OrderRepository();
 const inquiryRepository = new InquiryRepository();
+const notificationService = new NotificationService();
 
 export const services = {
   userService: new UserService(userRepository),
   productService: new ProductService(productRepository),
-  customOrderService: new CustomOrderService(customOrderRepository),
-  orderService: new OrderService(orderRepository),
-  inquiryService: new InquiryService(inquiryRepository),
+  customOrderService: new CustomOrderService(customOrderRepository, notificationService),
+  orderService: new OrderService(orderRepository, notificationService),
+  paymentService: new PaymentService(orderRepository),
+  inquiryService: new InquiryService(inquiryRepository, notificationService),
   mediaService: new MediaService(),
-  notificationService: new NotificationService(),
+  notificationService,
   authzService: new AuthzService(),
 };

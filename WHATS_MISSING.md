@@ -370,8 +370,7 @@ Frontend/src/contexts/admin.tsx
 // - Clear cart
 
 // 4. Payment Integration
-// - Stripe integration (recommended)
-// - Or: Paypal
+// - PayFast Integration (recommended)
 // - Or: Cash on delivery
 ```
 

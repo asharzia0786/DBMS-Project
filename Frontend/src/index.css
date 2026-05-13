@@ -110,6 +110,42 @@
   }
 }
 
+@layer components {
+  .cl-card,
+  .cl-footer,
+  .cl-footerAction,
+  .cl-footerPages,
+  .cl-navbar,
+  .cl-scrollBox {
+    background-color: rgba(14, 8, 4, 0.96) !important;
+    color: #e8d5b7 !important;
+  }
+
+  .cl-footer {
+    border-top: 1px solid rgba(212, 175, 114, 0.14) !important;
+  }
+
+  .cl-footerActionText,
+  .cl-formFieldLabel,
+  .cl-formFieldHintText,
+  .cl-dividerText {
+    color: rgba(232, 213, 183, 0.68) !important;
+  }
+
+  .cl-footerActionLink,
+  .cl-formResendCodeLink,
+  .cl-formFieldAction,
+  .cl-identityPreviewEditButton {
+    color: #d4af72 !important;
+  }
+
+  .cl-formFieldInput {
+    background-color: rgba(5, 4, 3, 0.76) !important;
+    border-color: rgba(212, 175, 114, 0.24) !important;
+    color: #e8d5b7 !important;
+  }
+}
+
 @keyframes shimmer {
   0%   { background-position: -400% center; }
   100% { background-position:  400% center; }

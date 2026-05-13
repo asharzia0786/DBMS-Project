@@ -46,6 +46,7 @@ router.post(
     const payload = createOrderSchema.parse(req.body);
     const data = await services.orderService.create({
       userId: user.id,
+      customerEmail: payload.customerEmail,
       type: payload.type,
       totalAmount: payload.totalAmount,
       paymentStatus: payload.paymentStatus,

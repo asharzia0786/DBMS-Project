@@ -48,6 +48,7 @@ router.post(
     const payload = createCustomOrderSchema.parse(req.body);
     const data = await services.customOrderService.create({
       userId: user.id,
+      customerEmail: payload.customerEmail,
       description: payload.description,
       referenceImages: payload.referenceImages,
       dimensions: payload.dimensions,

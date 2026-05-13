@@ -1,11 +1,15 @@
 import { OrderRepository } from "../repositories/order.repository";
+import { NotificationService } from "./notification.service";
 import { ORDER_TRANSITIONS, type OrderStatus } from "../types/workflow";
 import { AppError } from "../utils/app-error";
 import { assertStateTransition } from "../utils/state-machine";
 import type { OrderListQuery } from "../validators/order.validator";
 
 export class OrderService {
-  constructor(private readonly orderRepository: OrderRepository) {}
+  constructor(
+    private readonly orderRepository: OrderRepository,
+    private readonly notificationService?: NotificationService,
+  ) {}
 
   public async list(params: OrderListQuery & { userId?: string }) {
     const skip = (params.page - 1) * params.pageSize;
@@ -38,16 +42,32 @@ export class OrderService {
 
   public create(input: {
     userId: string;
+    customerEmail?: string;
     type: string;
     totalAmount: number;
     paymentStatus: string;
   }) {
     return this.orderRepository.create({
       user: { connect: { id: input.userId } },
+      customerEmail: input.customerEmail,
       type: input.type,
       totalAmount: input.totalAmount,
       paymentStatus: input.paymentStatus,
       status: "PENDING",
+    }).then(async (order) => {
+      if (order.customerEmail && this.notificationService) {
+        await this.notificationService
+          .sendOrderConfirmation({
+            to: order.customerEmail,
+            orderId: order.id,
+            amount: order.totalAmount,
+          })
+          .catch((error) => {
+            // eslint-disable-next-line no-console
+            console.error("Order confirmation email failed", error);
+          });
+      }
+      return order;
     });
   }
 
@@ -64,6 +84,19 @@ export class OrderService {
       "order",
     );
 
-    return this.orderRepository.updateStatus(input.id, input.status);
+    const updated = await this.orderRepository.updateStatus(input.id, input.status);
+    if (updated.customerEmail && this.notificationService) {
+      await this.notificationService
+        .sendOrderStatusUpdate({
+          to: updated.customerEmail,
+          orderId: updated.id,
+          status: updated.status,
+        })
+        .catch((error) => {
+          // eslint-disable-next-line no-console
+          console.error("Order status email failed", error);
+        });
+    }
+    return updated;
   }
 }

@@ -1,4 +1,5 @@
 import { CustomOrderRepository } from "../repositories/custom-order.repository";
+import { NotificationService } from "./notification.service";
 import {
   CUSTOM_ORDER_TRANSITIONS,
   type CustomOrderStatus,
@@ -8,7 +9,10 @@ import { assertStateTransition } from "../utils/state-machine";
 import type { CustomOrderListQuery } from "../validators/custom-order.validator";
 
 export class CustomOrderService {
-  constructor(private readonly customOrderRepository: CustomOrderRepository) {}
+  constructor(
+    private readonly customOrderRepository: CustomOrderRepository,
+    private readonly notificationService?: NotificationService,
+  ) {}
 
   public async list(params: CustomOrderListQuery & { userId?: string }) {
     const skip = (params.page - 1) * params.pageSize;
@@ -41,6 +45,7 @@ export class CustomOrderService {
 
   public create(input: {
     userId: string;
+    customerEmail?: string;
     description: string;
     referenceImages: string[];
     dimensions?: string;
@@ -48,6 +53,7 @@ export class CustomOrderService {
   }) {
     return this.customOrderRepository.create({
       user: { connect: { id: input.userId } },
+      customerEmail: input.customerEmail,
       description: input.description,
       referenceImages: input.referenceImages,
       dimensions: input.dimensions,
@@ -89,10 +95,28 @@ export class CustomOrderService {
       );
     }
 
-    return this.customOrderRepository.updateStatus(
+    const updated = await this.customOrderRepository.updateStatus(
       input.id,
       input.status,
       input.quotedPrice,
     );
+    if (
+      updated.customerEmail &&
+      this.notificationService &&
+      input.status === "QUOTED" &&
+      input.quotedPrice
+    ) {
+      await this.notificationService
+        .sendQuoteResponse({
+          to: updated.customerEmail,
+          orderId: updated.id,
+          quoteAmount: input.quotedPrice,
+        })
+        .catch((error) => {
+          // eslint-disable-next-line no-console
+          console.error("Quote email failed", error);
+        });
+    }
+    return updated;
   }
 }

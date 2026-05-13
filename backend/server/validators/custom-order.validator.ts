@@ -3,6 +3,7 @@ import { z } from "zod";
 import { CUSTOM_ORDER_STATUSES } from "../types/workflow";
 
 export const createCustomOrderSchema = z.object({
+  customerEmail: z.string().trim().email().optional(),
   description: z.string().trim().min(10),
   referenceImages: z.array(z.string().url()).default([]),
   dimensions: z.string().trim().optional(),

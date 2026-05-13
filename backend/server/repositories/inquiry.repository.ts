@@ -3,6 +3,10 @@ import type { Inquiry, Prisma } from "@prisma/client";
 import { prisma } from "../utils/prisma";
 
 export class InquiryRepository {
+  public findById(id: string): Promise<Inquiry | null> {
+    return prisma.inquiry.findUnique({ where: { id } });
+  }
+
   public findAll(params: {
     skip: number;
     take: number;
@@ -25,5 +29,12 @@ export class InquiryRepository {
 
   public create(data: Prisma.InquiryCreateInput): Promise<Inquiry> {
     return prisma.inquiry.create({ data });
+  }
+
+  public updateStatus(id: string, status: string): Promise<Inquiry> {
+    return prisma.inquiry.update({
+      where: { id },
+      data: { status },
+    });
   }
 }

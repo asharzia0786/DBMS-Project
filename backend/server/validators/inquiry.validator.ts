@@ -14,5 +14,14 @@ export const inquiryListQuerySchema = z.object({
   status: z.string().trim().min(1).max(40).optional(),
 });
 
+export const inquiryIdParamsSchema = z.object({
+  id: z.string().uuid(),
+});
+
+export const updateInquiryStatusSchema = z.object({
+  status: z.string().trim().min(1).max(40),
+  responseMessage: z.string().trim().min(1).max(4000).optional(),
+});
+
 export type CreateInquiryInput = z.infer<typeof createInquirySchema>;
 export type InquiryListQuery = z.infer<typeof inquiryListQuerySchema>;

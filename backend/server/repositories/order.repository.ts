@@ -7,6 +7,10 @@ export class OrderRepository {
     return prisma.order.findUnique({ where: { id } });
   }
 
+  public findBySafepayTrackerToken(token: string): Promise<Order | null> {
+    return prisma.order.findFirst({ where: { safepayTrackerToken: token } });
+  }
+
   public findAll(params: {
     skip: number;
     take: number;
@@ -37,6 +41,22 @@ export class OrderRepository {
     return prisma.order.update({
       where: { id },
       data: { status },
+    });
+  }
+
+  public updatePayment(
+    id: string,
+    data: {
+      paymentStatus?: string;
+      paymentMethod?: string;
+      safepayTrackerToken?: string;
+      status?: string;
+      paidAt?: Date;
+    },
+  ): Promise<Order> {
+    return prisma.order.update({
+      where: { id },
+      data,
     });
   }
 }
