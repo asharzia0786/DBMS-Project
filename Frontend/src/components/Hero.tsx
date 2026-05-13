@@ -4,24 +4,24 @@ import { ChevronDown } from 'lucide-react';
 import { fetchProducts } from '../lib/api';
 
 const HERO_FALLBACK_IMAGES = [
-  'https://images.pexels.com/photos/4846097/pexels-photo-4846097.jpeg?auto=compress&cs=tinysrgb&w=1400',
-  'https://images.pexels.com/photos/6580229/pexels-photo-6580229.jpeg?auto=compress&cs=tinysrgb&w=1200',
-  'https://images.pexels.com/photos/6580235/pexels-photo-6580235.jpeg?auto=compress&cs=tinysrgb&w=1200',
-  'https://images.pexels.com/photos/1571468/pexels-photo-1571468.jpeg?auto=compress&cs=tinysrgb&w=1200',
+  'https://images.pexels.com/photos/5825527/pexels-photo-5825527.jpeg?auto=compress&cs=tinysrgb&w=1400',
+  'https://images.pexels.com/photos/3757055/pexels-photo-3757055.jpeg?auto=compress&cs=tinysrgb&w=1200',
+  'https://images.pexels.com/photos/276583/pexels-photo-276583.jpeg?auto=compress&cs=tinysrgb&w=1200',
+  'https://images.pexels.com/photos/3637786/pexels-photo-3637786.jpeg?auto=compress&cs=tinysrgb&w=1200',
 ];
 
 const DETAIL_FLOATS = [
   {
     className: 'left-[4%] top-[18%] w-[22vw] max-w-[330px]',
-    delay: 0.05,
+    delay: 0.02,
   },
   {
     className: 'right-[5%] top-[16%] w-[24vw] max-w-[360px]',
-    delay: 0.1,
+    delay: 0.04,
   },
   {
     className: 'right-[9%] bottom-[13%] w-[18vw] max-w-[280px]',
-    delay: 0.15,
+    delay: 0.06,
   },
 ];
 
@@ -135,7 +135,7 @@ export default function Hero() {
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.1 }}
+          transition={{ duration: 0.5, delay: 0.03 }}
           className="mb-7 flex items-center justify-center gap-4"
         >
           <div className="h-px w-16 bg-gradient-to-r from-transparent to-champagne/60" />
@@ -148,7 +148,7 @@ export default function Hero() {
         <motion.h1
           initial={{ opacity: 0, y: 38 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.9, delay: 0.16, ease: [0.16, 1, 0.3, 1] }}
+          transition={{ duration: 0.7, delay: 0.06, ease: [0.16, 1, 0.3, 1] }}
           className="font-playfair text-[clamp(3.6rem,11vw,9.4rem)] font-normal leading-[0.84] text-beige"
         >
           Crafted
@@ -159,7 +159,7 @@ export default function Hero() {
         <motion.p
           initial={{ opacity: 0, y: 24 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.7, delay: 0.22 }}
+          transition={{ duration: 0.55, delay: 0.1 }}
           className="mx-auto mt-8 max-w-xl font-cormorant text-[clamp(1.1rem,2.4vw,1.55rem)] font-light tracking-wide text-beige/62"
         >
           Habib & Sons designs retail-ready furniture, wall decor, and custom CNC pieces for homes,
@@ -169,7 +169,7 @@ export default function Hero() {
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.65, delay: 0.28 }}
+          transition={{ duration: 0.5, delay: 0.14 }}
           className="mt-11 flex flex-col items-center justify-center gap-4 sm:flex-row"
         >
           <a
@@ -191,7 +191,7 @@ export default function Hero() {
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
-        transition={{ delay: 0.4, duration: 0.6 }}
+        transition={{ delay: 0.18, duration: 0.5 }}
         className="absolute bottom-9 left-1/2 z-10 flex -translate-x-1/2 flex-col items-center gap-2"
       >
         <span className="font-manrope text-[9px] uppercase tracking-[0.4em] text-beige/40">Scroll</span>
