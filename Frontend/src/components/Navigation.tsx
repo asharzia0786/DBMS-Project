@@ -6,7 +6,7 @@ import { useCart } from '../contexts/cart';
 import { isAdminUser } from '../lib/auth-role';
 
 const navLinks = [
-  { label: 'Collection', href: '#collection' },
+  { label: 'Collection', href: '/collection' },
   { label: 'Craftsmanship', href: '#craftsmanship' },
   { label: 'Workshop', href: '#workshop' },
   { label: 'Contact', href: '#contact' },
