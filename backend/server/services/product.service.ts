@@ -45,11 +45,12 @@ export class ProductService {
       throw new AppError("Product slug already exists.", "SLUG_CONFLICT", 409);
     }
 
-    return this.productRepository.create({
+      return this.productRepository.create({
       name: input.name,
       slug: input.slug,
       description: input.description,
       basePrice: input.basePrice,
+      stock: input.stock,
       category: input.category,
       material: input.material,
       finish: input.finish,
@@ -72,6 +73,7 @@ export class ProductService {
     if (input.name !== undefined) data.name = input.name;
     if (input.description !== undefined) data.description = input.description;
     if (input.basePrice !== undefined) data.basePrice = input.basePrice;
+    if (input.stock !== undefined) data.stock = input.stock;
     if (input.category !== undefined) data.category = input.category;
     if (input.material !== undefined) data.material = input.material;
     if (input.finish !== undefined) data.finish = input.finish;

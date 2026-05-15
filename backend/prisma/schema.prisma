@@ -22,6 +22,7 @@ model Product {
   slug        String         @unique
   description String?
   basePrice   Int
+  stock       Int            @default(0)
   category    String?
   material    String?
   finish      String?
@@ -67,6 +68,7 @@ model Order {
   userId        String
   customerEmail String?
   type          String
+  items         Json?
   totalAmount   Int
   paymentStatus String
   paymentMethod String?

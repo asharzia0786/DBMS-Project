@@ -3,7 +3,7 @@ $kind: environment
 name: CNC Store - Development
 values:
   - key: baseUrl
-    value: 'http://localhost:3000'
+    value: 'http://localhost:4000'
     enabled: true
     secret: false
   - key: authToken

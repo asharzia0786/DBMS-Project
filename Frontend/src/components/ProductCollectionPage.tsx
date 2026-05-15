@@ -48,6 +48,18 @@ function getProductFeatures(product: Product): string[] {
   return Array.from(featureSet);
 }
 
+function getInventoryLabel(stock: number): string {
+  if (stock <= 0) {
+    return 'Out of stock';
+  }
+
+  if (stock <= 5) {
+    return `Only ${stock} left`;
+  }
+
+  return `${stock} in stock`;
+}
+
 export default function ProductCollectionPage() {
   const { addToCart } = useCart();
   const [products, setProducts] = useState<Product[]>([]);
@@ -305,8 +317,11 @@ export default function ProductCollectionPage() {
                         >
                           {feature}
                         </span>
-                      ))}
+                    ))}
                   </div>
+                  <p className="mt-4 font-manrope text-[10px] uppercase tracking-[0.24em] text-beige/45">
+                    {getInventoryLabel(product.stock)}
+                  </p>
                 </div>
               </a>
               <div className="flex items-center justify-between border-t border-champagne/10 px-6 py-5">
@@ -317,10 +332,11 @@ export default function ProductCollectionPage() {
                   <button
                     type="button"
                     onClick={() => addToCart(product)}
-                    className="inline-flex items-center gap-2 bg-champagne px-4 py-2 font-manrope text-[10px] uppercase tracking-[0.2em] text-void hover:bg-gold-200"
+                    disabled={product.stock <= 0}
+                    className="inline-flex items-center gap-2 bg-champagne px-4 py-2 font-manrope text-[10px] uppercase tracking-[0.2em] text-void hover:bg-gold-200 disabled:cursor-not-allowed disabled:opacity-50"
                   >
                     <ShoppingBag size={14} />
-                    Add
+                    {product.stock <= 0 ? 'Unavailable' : 'Add'}
                   </button>
                   <a
                     href={`/products/${product.slug}`}

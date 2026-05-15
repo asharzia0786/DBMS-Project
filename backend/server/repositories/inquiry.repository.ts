@@ -1,6 +1,7 @@
 import type { Inquiry, Prisma } from "@prisma/client";
 
 import { prisma } from "../utils/prisma";
+import type { InquiryStatus } from "../types/workflow";
 
 export class InquiryRepository {
   public findById(id: string): Promise<Inquiry | null> {
@@ -10,7 +11,7 @@ export class InquiryRepository {
   public findAll(params: {
     skip: number;
     take: number;
-    status?: string;
+    status?: InquiryStatus;
   }): Promise<[Inquiry[], number]> {
     const where: Prisma.InquiryWhereInput = {
       ...(params.status ? { status: params.status } : {}),

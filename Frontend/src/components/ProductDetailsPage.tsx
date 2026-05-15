@@ -65,6 +65,7 @@ export default function ProductDetailsPage({ slug }: ProductDetailsPageProps) {
   }, [product]);
 
   const selectedImage = images[Math.min(selectedImageIndex, Math.max(images.length - 1, 0))];
+  const availableStock = product?.stock ?? 0;
   const productSeo = buildProductSeo({
     slug,
     name: product?.name,
@@ -76,8 +77,19 @@ export default function ProductDetailsPage({ slug }: ProductDetailsPageProps) {
   const increaseQuantity = () => setQuantity((current) => current + 1);
   const decreaseQuantity = () => setQuantity((current) => Math.max(1, current - 1));
 
+  useEffect(() => {
+    if (!product) {
+      return;
+    }
+
+    setQuantity((current) => (availableStock > 0 ? Math.min(current, availableStock) : 1));
+  }, [availableStock, product]);
+
   const handleAddToCart = () => {
     if (!product) {
+      return;
+    }
+    if (product.stock <= 0) {
       return;
     }
     addToCart(product, quantity);
@@ -85,6 +97,9 @@ export default function ProductDetailsPage({ slug }: ProductDetailsPageProps) {
 
   const handleBuyNow = () => {
     if (!product) {
+      return;
+    }
+    if (product.stock <= 0) {
       return;
     }
     addToCart(product, quantity);
@@ -166,15 +181,21 @@ export default function ProductDetailsPage({ slug }: ProductDetailsPageProps) {
                   'Crafted with premium materials, precise CNC detailing, and hand-finished luxury surfaces.'}
               </p>
 
-              <p className="mt-8 font-cormorant text-4xl text-champagne">
-                {formatCurrency(product.basePrice)}
+              <p className="mt-8 font-cormorant text-4xl text-champagne">{formatCurrency(product.basePrice)}</p>
+              <p className="mt-2 font-manrope text-[10px] uppercase tracking-[0.24em] text-beige/45">
+                {availableStock <= 0
+                  ? 'Out of stock'
+                  : availableStock <= 5
+                    ? `Only ${availableStock} left`
+                    : `${availableStock} available`}
               </p>
 
               <div className="mt-8 inline-flex items-center border border-champagne/20">
                 <button
                   type="button"
                   onClick={decreaseQuantity}
-                  className="p-3 text-champagne"
+                  disabled={quantity <= 1}
+                  className="p-3 text-champagne disabled:opacity-40"
                   aria-label="Decrease quantity"
                 >
                   <Minus size={15} />
@@ -183,7 +204,8 @@ export default function ProductDetailsPage({ slug }: ProductDetailsPageProps) {
                 <button
                   type="button"
                   onClick={increaseQuantity}
-                  className="p-3 text-champagne"
+                  disabled={product.stock > 0 ? quantity >= product.stock : true}
+                  className="p-3 text-champagne disabled:opacity-40"
                   aria-label="Increase quantity"
                 >
                   <Plus size={15} />
@@ -194,15 +216,17 @@ export default function ProductDetailsPage({ slug }: ProductDetailsPageProps) {
                 <button
                   type="button"
                   onClick={handleAddToCart}
-                  className="inline-flex items-center gap-2 bg-champagne px-6 py-3 font-manrope text-[11px] uppercase tracking-[0.24em] text-void hover:bg-gold-200"
+                  disabled={product.stock <= 0}
+                  className="inline-flex items-center gap-2 bg-champagne px-6 py-3 font-manrope text-[11px] uppercase tracking-[0.24em] text-void hover:bg-gold-200 disabled:cursor-not-allowed disabled:opacity-50"
                 >
                   <ShoppingBag size={15} />
-                  Add to cart
+                  {product.stock <= 0 ? 'Unavailable' : 'Add to cart'}
                 </button>
                 <button
                   type="button"
                   onClick={handleBuyNow}
-                  className="border border-champagne/40 px-6 py-3 font-manrope text-[11px] uppercase tracking-[0.24em] text-champagne hover:bg-champagne/10"
+                  disabled={product.stock <= 0}
+                  className="border border-champagne/40 px-6 py-3 font-manrope text-[11px] uppercase tracking-[0.24em] text-champagne hover:bg-champagne/10 disabled:cursor-not-allowed disabled:opacity-50"
                 >
                   Buy now
                 </button>
@@ -223,6 +247,10 @@ export default function ProductDetailsPage({ slug }: ProductDetailsPageProps) {
                 </p>
                 <p>
                   <span className="text-beige/35">Category:</span> {product.category || 'Luxury Collection'}
+                </p>
+                <p>
+                  <span className="text-beige/35">Stock:</span>{' '}
+                  {product.stock <= 0 ? 'Out of stock' : `${product.stock} available`}
                 </p>
               </div>
             </div>

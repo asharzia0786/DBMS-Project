@@ -90,3 +90,6 @@ export const ORDER_TRANSITIONS: Record<OrderStatus, readonly OrderStatus[]> = {
   DELIVERED: ["PENDING", "PAID", "PROCESSING", "SHIPPED"],
   CANCELLED: [],
 };
+
+export const INQUIRY_STATUSES = ["NEW", "READ", "RESPONDED", "ARCHIVED"] as const;
+export type InquiryStatus = (typeof INQUIRY_STATUSES)[number];

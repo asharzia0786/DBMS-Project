@@ -51,6 +51,7 @@ export default function Checkout() {
         paymentStatus: 'PENDING',
         paymentMethod: form.paymentMethod,
         customerEmail: user?.primaryEmailAddress?.emailAddress,
+        items: items.map((item) => ({ productId: item.productId, quantity: item.quantity })),
       });
 
       clearCart();

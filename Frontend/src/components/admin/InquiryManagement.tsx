@@ -4,6 +4,8 @@ import { Mail } from 'lucide-react';
 
 import { fetchAdminInquiries, updateInquiryStatus, type Inquiry } from '../../lib/api';
 
+const INQUIRY_STATUSES = ['NEW', 'READ', 'RESPONDED', 'ARCHIVED'] as const;
+
 export default function InquiryManagement() {
   const { getToken } = useAuth();
   const [inquiries, setInquiries] = useState<Inquiry[]>([]);
@@ -55,21 +57,31 @@ export default function InquiryManagement() {
       {error ? <p className="mt-5 font-manrope text-sm text-red-300">{error}</p> : null}
       <div className="mt-8 space-y-4">
         {inquiries.map((inquiry) => (
-          <article key={inquiry.id} className="glass-card p-5">
+          <article
+            key={inquiry.id}
+            className={`glass-card p-5 transition-opacity ${inquiry.status === 'ARCHIVED' ? 'opacity-45' : ''}`}
+          >
             <div className="flex flex-wrap justify-between gap-4">
               <div>
                 <h2 className="font-cormorant text-3xl">{inquiry.fullName}</h2>
                 <p className="mt-1 font-manrope text-xs text-beige/45">{inquiry.email} · {inquiry.phone} · {inquiry.city}</p>
               </div>
-              <a href={`mailto:${inquiry.email}`} className="inline-flex items-center gap-2 text-champagne">
+              <button
+                type="button"
+                onClick={() => void changeStatus(inquiry.id, 'RESPONDED', responses[inquiry.id])}
+                disabled={updatingId === inquiry.id || inquiry.status === 'ARCHIVED'}
+                className="inline-flex items-center gap-2 text-champagne disabled:opacity-40"
+              >
                 <Mail size={17} />
-                Reply
-              </a>
+                Send response
+              </button>
             </div>
-            <p className="mt-4 font-manrope text-sm leading-7 text-beige/65">{inquiry.message}</p>
+            <p className={`mt-4 font-manrope text-sm leading-7 ${inquiry.status === 'ARCHIVED' ? 'text-beige/35' : 'text-beige/65'}`}>
+              {inquiry.message}
+            </p>
             <div className="mt-5 grid gap-3 lg:grid-cols-[180px_1fr_auto]">
               <div className="flex flex-wrap gap-2">
-                {['NEW', 'READ', 'RESPONDED', 'ARCHIVED'].map((status) => (
+                {INQUIRY_STATUSES.map((status) => (
                   <button
                     key={status}
                     type="button"
@@ -84,21 +96,24 @@ export default function InquiryManagement() {
                     {status}
                   </button>
                 ))}
+                {inquiry.status === 'ARCHIVED' ? (
+                  <button
+                    type="button"
+                    onClick={() => void changeStatus(inquiry.id, 'READ')}
+                    disabled={updatingId === inquiry.id}
+                    className="border border-champagne/25 px-3 py-2 font-manrope text-[10px] uppercase tracking-[0.18em] text-champagne transition-colors hover:border-champagne/45 hover:text-beige disabled:opacity-50"
+                  >
+                    Unarchive
+                  </button>
+                ) : null}
               </div>
               <input
                 value={responses[inquiry.id] || ''}
                 onChange={(event) => setResponses((current) => ({ ...current, [inquiry.id]: event.target.value }))}
                 placeholder="Optional response email message"
-                className="border border-champagne/20 bg-void px-3 py-2 font-manrope text-sm text-beige placeholder:text-beige/30"
+                disabled={inquiry.status === 'ARCHIVED'}
+                className="border border-champagne/20 bg-void px-3 py-2 font-manrope text-sm text-beige placeholder:text-beige/30 disabled:cursor-not-allowed disabled:opacity-40"
               />
-              <button
-                type="button"
-                onClick={() => void changeStatus(inquiry.id, 'RESPONDED', responses[inquiry.id])}
-                disabled={updatingId === inquiry.id}
-                className="bg-champagne px-4 py-2 font-manrope text-[11px] uppercase tracking-[0.2em] text-void disabled:opacity-50"
-              >
-                Send response
-              </button>
             </div>
           </article>
         ))}

@@ -53,6 +53,7 @@ export class ProductRepository {
     slug: string;
     description?: string;
     basePrice: number;
+    stock: number;
     category?: string;
     material?: string;
     finish?: string;
@@ -65,6 +66,7 @@ export class ProductRepository {
         slug: data.slug,
         description: data.description,
         basePrice: data.basePrice,
+        stock: data.stock,
         category: data.category,
         material: data.material,
         finish: data.finish,

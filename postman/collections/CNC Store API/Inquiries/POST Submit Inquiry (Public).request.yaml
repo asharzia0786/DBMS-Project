@@ -30,4 +30,7 @@ scripts:
       pm.test("Response data has id", function () {
         const json = pm.response.json();
         pm.expect(json.data).to.have.property("id");
+        if (json.data && json.data.id) {
+          pm.environment.set("inquiryId", json.data.id);
+        }
       });

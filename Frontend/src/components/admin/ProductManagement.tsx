@@ -11,6 +11,7 @@ type ProductForm = {
   slug: string;
   description: string;
   basePrice: string;
+  stock: string;
   category: string;
   material: string;
   finish: string;
@@ -23,6 +24,7 @@ const emptyForm: ProductForm = {
   slug: '',
   description: '',
   basePrice: '',
+  stock: '0',
   category: '',
   material: '',
   finish: '',
@@ -59,6 +61,7 @@ export default function ProductManagement() {
       slug: form.slug || slugify(form.name),
       description: form.description || undefined,
       basePrice: Number(form.basePrice),
+      stock: Number(form.stock),
       category: form.category || undefined,
       material: form.material || undefined,
       finish: form.finish || undefined,
@@ -84,6 +87,7 @@ export default function ProductManagement() {
       slug: product.slug,
       description: product.description || '',
       basePrice: String(product.basePrice),
+      stock: String(product.stock),
       category: product.category || '',
       material: product.material || '',
       finish: product.finish || '',
@@ -103,6 +107,24 @@ export default function ProductManagement() {
       <p className="font-manrope text-[11px] uppercase tracking-[0.35em] text-champagne">Catalog</p>
       <h1 className="mt-3 font-cormorant text-5xl">Product management</h1>
       {status ? <p className="mt-4 font-manrope text-sm text-beige/60">{status}</p> : null}
+      <div className="mt-8 grid gap-4 sm:grid-cols-3">
+        <div className="glass-card p-5">
+          <p className="font-manrope text-[10px] uppercase tracking-[0.25em] text-beige/45">Total stock</p>
+          <p className="mt-3 font-cormorant text-4xl text-champagne">{products.reduce((sum, product) => sum + product.stock, 0)}</p>
+        </div>
+        <div className="glass-card p-5">
+          <p className="font-manrope text-[10px] uppercase tracking-[0.25em] text-beige/45">Low stock</p>
+          <p className="mt-3 font-cormorant text-4xl text-champagne">
+            {products.filter((product) => product.stock > 0 && product.stock <= 5).length}
+          </p>
+        </div>
+        <div className="glass-card p-5">
+          <p className="font-manrope text-[10px] uppercase tracking-[0.25em] text-beige/45">Out of stock</p>
+          <p className="mt-3 font-cormorant text-4xl text-champagne">
+            {products.filter((product) => product.stock <= 0).length}
+          </p>
+        </div>
+      </div>
       <section className="mt-8 grid gap-8 xl:grid-cols-[420px_1fr]">
         <form onSubmit={handleSubmit} className="glass-card h-fit space-y-4 p-6">
           <h2 className="font-cormorant text-3xl">{form.id ? 'Edit product' : 'Add product'}</h2>
@@ -110,6 +132,7 @@ export default function ProductManagement() {
             ['name', 'Name'],
             ['slug', 'Slug'],
             ['basePrice', 'Price PKR'],
+            ['stock', 'Stock'],
             ['category', 'Category'],
             ['material', 'Material'],
             ['finish', 'Finish'],
@@ -120,6 +143,8 @@ export default function ProductManagement() {
               <input
                 required={key === 'name' || key === 'basePrice'}
                 value={form[key as keyof ProductForm] as string}
+                type={key === 'basePrice' || key === 'stock' ? 'number' : 'text'}
+                min={key === 'basePrice' ? '1' : key === 'stock' ? '0' : undefined}
                 onChange={(event) => setForm((current) => ({ ...current, [key]: event.target.value, ...(key === 'name' && !current.id ? { slug: slugify(event.target.value) } : {}) }))}
                 className="mt-2 w-full border border-champagne/15 bg-void/70 px-4 py-3 font-manrope text-sm text-beige outline-none focus:border-champagne"
               />
@@ -148,7 +173,12 @@ export default function ProductManagement() {
               </div>
               <button type="button" onClick={() => editProduct(product)} className="text-left">
                 <h3 className="font-cormorant text-2xl text-beige">{product.name}</h3>
-                <p className="mt-2 font-manrope text-xs text-beige/50">{product.category || 'Uncategorized'} · PKR {product.basePrice.toLocaleString('en-PK')}</p>
+                <p className="mt-2 font-manrope text-xs text-beige/50">
+                  {product.category || 'Uncategorized'} · PKR {product.basePrice.toLocaleString('en-PK')} · Stock {product.stock}
+                </p>
+                <p className="mt-2 font-manrope text-[10px] uppercase tracking-[0.22em] text-beige/40">
+                  {product.stock <= 0 ? 'Out of stock' : product.stock <= 5 ? 'Low stock' : 'In stock'}
+                </p>
               </button>
               <button type="button" onClick={() => void removeProduct(product.id)} className="text-red-300">
                 <Trash2 size={18} />

@@ -1,6 +1,7 @@
 import { InquiryRepository } from "../repositories/inquiry.repository";
 import { NotificationService } from "./notification.service";
 import { AppError } from "../utils/app-error";
+import type { InquiryStatus } from "../types/workflow";
 import type {
   CreateInquiryInput,
   InquiryListQuery,
@@ -42,7 +43,7 @@ export class InquiryService {
 
   public async updateStatus(input: {
     id: string;
-    status: string;
+    status: InquiryStatus;
     responseMessage?: string;
   }) {
     const inquiry = await this.inquiryRepository.findById(input.id);
@@ -51,7 +52,7 @@ export class InquiryService {
     }
 
     const updated = await this.inquiryRepository.updateStatus(input.id, input.status);
-    if (input.responseMessage && this.notificationService) {
+    if (input.status !== "ARCHIVED" && input.responseMessage && this.notificationService) {
       await this.notificationService
         .sendInquiryResponse({
           to: updated.email,

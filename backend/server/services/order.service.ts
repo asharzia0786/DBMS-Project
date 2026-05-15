@@ -1,8 +1,12 @@
+import type { Prisma } from "@prisma/client";
+
 import { OrderRepository } from "../repositories/order.repository";
 import { NotificationService } from "./notification.service";
 import type { OrderStatus } from "../types/workflow";
 import { AppError } from "../utils/app-error";
+import { prisma } from "../utils/prisma";
 import type { OrderListQuery } from "../validators/order.validator";
+import type { OrderItemInput } from "../validators/order.validator";
 
 const CANCELLABLE_STATUSES: OrderStatus[] = ["PENDING", "PAID", "PROCESSING"];
 
@@ -41,37 +45,72 @@ export class OrderService {
     return order;
   }
 
-  public create(input: {
+  public async create(input: {
     userId: string;
     customerEmail?: string;
     type: string;
     totalAmount: number;
     paymentStatus: string;
     paymentMethod?: string;
+    items: OrderItemInput[];
   }) {
-    return this.orderRepository.create({
-      user: { connect: { id: input.userId } },
-      customerEmail: input.customerEmail,
-      type: input.type,
-      totalAmount: input.totalAmount,
-      paymentStatus: input.paymentStatus,
-      paymentMethod: input.paymentMethod,
-      status: "PENDING",
-    }).then(async (order) => {
-      if (order.customerEmail && this.notificationService) {
-        await this.notificationService
-          .sendOrderConfirmation({
-            to: order.customerEmail,
-            orderId: order.id,
-            amount: order.totalAmount,
-          })
-          .catch((error) => {
-            // eslint-disable-next-line no-console
-            console.error("Order confirmation email failed", error);
-          });
+    const order = await prisma.$transaction(async (tx) => {
+      const productIds = input.items.map((item) => item.productId);
+      const products = await tx.product.findMany({
+        where: { id: { in: productIds } },
+        select: { id: true, name: true, stock: true },
+      });
+
+      if (products.length !== productIds.length) {
+        throw new AppError("One or more products were not found.", "PRODUCT_NOT_FOUND", 404);
       }
-      return order;
+
+      for (const item of input.items) {
+        const product = products.find((entry) => entry.id === item.productId);
+        if (!product || product.stock < item.quantity) {
+          throw new AppError(
+            `Not enough stock for ${product?.name || "a product"}.`,
+            "INSUFFICIENT_STOCK",
+            400,
+          );
+        }
+      }
+
+      for (const item of input.items) {
+        await tx.product.update({
+          where: { id: item.productId },
+          data: { stock: { decrement: item.quantity } },
+        });
+      }
+
+      return tx.order.create({
+        data: {
+          user: { connect: { id: input.userId } },
+          customerEmail: input.customerEmail,
+          type: input.type,
+          items: input.items as unknown as Prisma.InputJsonValue,
+          totalAmount: input.totalAmount,
+          paymentStatus: input.paymentStatus,
+          paymentMethod: input.paymentMethod,
+          status: "PENDING",
+        },
+      });
     });
+
+    if (order.customerEmail && this.notificationService) {
+      await this.notificationService
+        .sendOrderConfirmation({
+          to: order.customerEmail,
+          orderId: order.id,
+          amount: order.totalAmount,
+        })
+        .catch((error) => {
+          // eslint-disable-next-line no-console
+          console.error("Order confirmation email failed", error);
+        });
+    }
+
+    return order;
   }
 
   public async updateStatus(input: { id: string; status: OrderStatus }) {
@@ -118,7 +157,32 @@ export class OrderService {
       );
     }
 
-    const updated = await this.orderRepository.updateStatus(input.id, "CANCELLED");
+    const updated = await prisma.$transaction(async (tx) => {
+      const currentOrder = await tx.order.findUnique({ where: { id: input.id } });
+      if (!currentOrder) {
+        throw new AppError("Order not found.", "ORDER_NOT_FOUND", 404);
+      }
+
+      const orderItems = Array.isArray(currentOrder.items)
+        ? (currentOrder.items as Array<{ productId?: string; quantity?: number }>)
+        : [];
+
+      for (const item of orderItems) {
+        if (!item.productId || !item.quantity) {
+          continue;
+        }
+
+        await tx.product.update({
+          where: { id: item.productId },
+          data: { stock: { increment: item.quantity } },
+        });
+      }
+
+      return tx.order.update({
+        where: { id: input.id },
+        data: { status: "CANCELLED" },
+      });
+    });
     if (updated.customerEmail && this.notificationService) {
       await this.notificationService
         .sendOrderStatusUpdate({

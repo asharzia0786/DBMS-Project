@@ -18,6 +18,7 @@ export type CartItem = {
   price: number;
   imageUrl?: string;
   quantity: number;
+  stock: number;
 };
 
 type CartContextValue = {
@@ -36,7 +37,19 @@ const STORAGE_KEY = 'luxury-cnc-cart';
 function loadCart(): CartItem[] {
   try {
     const raw = window.localStorage.getItem(STORAGE_KEY);
-    return raw ? (JSON.parse(raw) as CartItem[]) : [];
+    if (!raw) {
+      return [];
+    }
+
+    return (JSON.parse(raw) as Array<Partial<CartItem>>).map((item) => ({
+      productId: item.productId || '',
+      slug: item.slug || '',
+      name: item.name || '',
+      price: item.price || 0,
+      imageUrl: item.imageUrl,
+      quantity: Math.max(1, item.quantity || 1),
+      stock: Math.max(0, item.stock || 0),
+    })).filter((item) => item.productId && item.slug && item.name);
   } catch {
     return [];
   }
@@ -50,12 +63,17 @@ export function CartProvider({ children }: { children: ReactNode }) {
   }, [items]);
 
   const addToCart = useCallback((product: Product, quantity = 1) => {
+    if (product.stock <= 0) {
+      return;
+    }
+
     setItems((current) => {
       const existing = current.find((item) => item.productId === product.id);
       if (existing) {
+        const nextQuantity = Math.min(existing.quantity + quantity, product.stock);
         return current.map((item) =>
           item.productId === product.id
-            ? { ...item, quantity: item.quantity + quantity }
+            ? { ...item, quantity: nextQuantity, stock: product.stock }
             : item,
         );
       }
@@ -68,7 +86,8 @@ export function CartProvider({ children }: { children: ReactNode }) {
           name: product.name,
           price: product.basePrice,
           imageUrl: product.images[0]?.imageUrl,
-          quantity,
+          quantity: Math.min(quantity, product.stock),
+          stock: product.stock,
         },
       ];
     });
@@ -80,9 +99,14 @@ export function CartProvider({ children }: { children: ReactNode }) {
 
   const updateQuantity = useCallback((productId: string, quantity: number) => {
     setItems((current) =>
-      current.map((item) =>
-        item.productId === productId ? { ...item, quantity: Math.max(1, quantity) } : item,
-      ),
+      current.map((item) => {
+        if (item.productId !== productId) {
+          return item;
+        }
+
+        const nextQuantity = item.stock > 0 ? Math.max(1, Math.min(quantity, item.stock)) : Math.max(1, quantity);
+        return { ...item, quantity: nextQuantity };
+      }),
     );
   }, []);
 

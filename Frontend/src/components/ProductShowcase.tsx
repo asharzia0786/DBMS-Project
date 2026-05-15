@@ -50,6 +50,18 @@ function mapToShowcaseProduct(product: Product, index: number): ShowcaseProduct 
   };
 }
 
+function getInventoryLabel(stock: number): string {
+  if (stock <= 0) {
+    return 'Out of stock';
+  }
+
+  if (stock <= 5) {
+    return `Only ${stock} left`;
+  }
+
+  return `${stock} in stock`;
+}
+
 function ProductCard({ product, index }: { product: ShowcaseProduct; index: number }) {
   const [hovered, setHovered] = useState(false);
   const [tilt, setTilt] = useState({ x: 0, y: 0 });
@@ -154,34 +166,38 @@ function ProductCard({ product, index }: { product: ShowcaseProduct; index: numb
           {product.desc}
         </p>
 
-        <div className="flex items-end justify-between">
-          <div className="space-y-1">
-            <div className="flex items-center gap-3">
-              <span className="font-manrope text-[9px] tracking-[0.3em] uppercase text-beige/30">Material</span>
-              <span className="font-manrope text-[10px] text-beige/60">{product.material}</span>
+          <div className="flex items-end justify-between">
+            <div className="space-y-1">
+              <div className="flex items-center gap-3">
+                <span className="font-manrope text-[9px] tracking-[0.3em] uppercase text-beige/30">Material</span>
+                <span className="font-manrope text-[10px] text-beige/60">{product.material}</span>
+              </div>
+              <div className="flex items-center gap-3">
+                <span className="font-manrope text-[9px] tracking-[0.3em] uppercase text-beige/30">Size</span>
+                <span className="font-manrope text-[10px] text-beige/60">{product.size}</span>
+              </div>
             </div>
-            <div className="flex items-center gap-3">
-              <span className="font-manrope text-[9px] tracking-[0.3em] uppercase text-beige/30">Size</span>
-              <span className="font-manrope text-[10px] text-beige/60">{product.size}</span>
+            <div className="text-right">
+              <div className="font-cormorant text-lg text-champagne">{product.price}</div>
+              <div className="mt-1 font-manrope text-[9px] uppercase tracking-[0.24em] text-beige/45">
+                {getInventoryLabel(product.source.stock)}
+              </div>
             </div>
           </div>
-          <div className="text-right">
-            <div className="font-cormorant text-lg text-champagne">{product.price}</div>
-          </div>
-        </div>
 
-        <div className="mt-6 flex flex-wrap gap-3 border-t border-champagne/10 pt-6">
-          <button
-            type="button"
-            onClick={(event) => {
-              event.stopPropagation();
-              addToCart(product.source);
-            }}
-            className="flex items-center gap-2 bg-champagne px-4 py-2 font-manrope text-[10px] uppercase tracking-[0.22em] text-void hover:bg-gold-200"
-          >
-            <ShoppingBag size={14} />
-            Add to cart
-          </button>
+          <div className="mt-6 flex flex-wrap gap-3 border-t border-champagne/10 pt-6">
+            <button
+              type="button"
+              onClick={(event) => {
+                event.stopPropagation();
+                addToCart(product.source);
+              }}
+              disabled={product.source.stock <= 0}
+              className="flex items-center gap-2 bg-champagne px-4 py-2 font-manrope text-[10px] uppercase tracking-[0.22em] text-void hover:bg-gold-200 disabled:cursor-not-allowed disabled:opacity-50"
+            >
+              <ShoppingBag size={14} />
+              {product.source.stock <= 0 ? 'Unavailable' : 'Add to cart'}
+            </button>
           <a
             href={productUrl}
             onClick={(event) => event.stopPropagation()}

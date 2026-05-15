@@ -13,18 +13,51 @@ function money(value: number): string {
 }
 
 function fromAddress(): string {
-  return env.EMAIL_FROM || "no-reply@example.com";
+  return env.EMAIL_FROM || "business.habibandsons@gmail.com";
 }
 
-async function sendEmail(input: { to: string; subject: string; html: string }) {
+function escapeHtml(value: string): string {
+  return value
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;");
+}
+
+function emailShell(title: string, body: string): string {
+  return `
+    <div style="font-family: Arial, sans-serif; line-height: 1.6; color: #222;">
+      <h1 style="margin: 0 0 16px;">${escapeHtml(title)}</h1>
+      <div>${body}</div>
+      <p style="margin-top: 24px;">— Habib and Sons</p>
+    </div>
+  `;
+}
+
+function paragraph(text: string): string {
+  return `<p>${text}</p>`;
+}
+
+async function sendEmail(input: { to: string; subject: string; html: string; replyTo?: string }) {
   try {
     const resend = getResendClient();
-    await resend.emails.send({
+    const payload: {
+      from: string;
+      to: string;
+      subject: string;
+      html: string;
+      replyTo?: string;
+    } = {
       from: fromAddress(),
       to: input.to,
       subject: input.subject,
       html: input.html,
-    });
+    };
+    if (input.replyTo) {
+      payload.replyTo = input.replyTo;
+    }
+    await resend.emails.send(payload);
   } catch (error) {
     if (error instanceof Error) {
       throw new AppError(error.message, "EMAIL_DELIVERY_FAILED", 502);
@@ -72,12 +105,14 @@ export class NotificationService {
     await sendEmail({
       to: input.to,
       subject: `Quote ready (#${input.orderId.slice(0, 8)})`,
-      html: `
-        <h1>Your custom order quote is ready</h1>
-        <p>Our workshop has reviewed your custom request.</p>
-        <p><strong>Quote:</strong> ${money(input.quoteAmount)}</p>
-        <p>Reply to this email or sign in to approve the quote.</p>
-      `,
+      html: emailShell(
+        "Your custom order quote is ready",
+        [
+          paragraph("Our workshop has reviewed your custom request."),
+          paragraph(`<strong>Quote:</strong> ${money(input.quoteAmount)}`),
+          paragraph("Reply to this email or sign in to approve the quote."),
+        ].join(""),
+      ),
     });
   }
 
@@ -100,12 +135,14 @@ export class NotificationService {
     await sendEmail({
       to: input.to,
       subject: `Order received (#${input.orderId.slice(0, 8)})`,
-      html: `
-        <h1>We received your order</h1>
-        <p>Thank you for placing your order with Habib and Sons.</p>
-        <p><strong>Total:</strong> ${money(input.amount)}</p>
-        <p>Our team will confirm production and delivery details shortly.</p>
-      `,
+      html: emailShell(
+        "We received your order",
+        [
+          paragraph("Thank you for placing your order with Habib and Sons."),
+          paragraph(`<strong>Total:</strong> ${money(input.amount)}`),
+          paragraph("Our team will confirm production and delivery details shortly."),
+        ].join(""),
+      ),
     });
   }
 
@@ -126,15 +163,27 @@ export class NotificationService {
     status: string;
   }): Promise<void> {
     const isCancelled = input.status === "CANCELLED";
+    const isShipped = input.status === "SHIPPED";
     await sendEmail({
       to: input.to,
       subject: isCancelled
         ? `Order cancelled (#${input.orderId.slice(0, 8)})`
-        : `Order status updated (#${input.orderId.slice(0, 8)})`,
-      html: `
-        <h1>${isCancelled ? "Your order was cancelled" : "Your order status changed"}</h1>
-        <p>Your order is now <strong>${input.status}</strong>.</p>
-      `,
+        : isShipped
+          ? `Your order is on the way (#${input.orderId.slice(0, 8)})`
+          : `Order status updated (#${input.orderId.slice(0, 8)})`,
+      html: emailShell(
+        isCancelled
+          ? "Your order was cancelled"
+          : isShipped
+            ? "Your order is out for delivery"
+            : "Your order status changed",
+        [
+          paragraph(`Your order is now <strong>${escapeHtml(input.status)}</strong>.`),
+          isShipped
+            ? paragraph("Logistics tracking has started and your shipment is being prepared for dispatch.")
+            : paragraph("You can check your order history for the latest status."),
+        ].join(""),
+      ),
     });
   }
 
@@ -143,9 +192,14 @@ export class NotificationService {
     subject: string;
     message: string;
   }): Promise<void> {
-    await enqueueNotificationJob("inquiry-response", {
-      type: "inquiry-response",
-      ...input,
+    await sendEmail({
+      to: input.to,
+      subject: input.subject,
+      replyTo: fromAddress(),
+      html: emailShell(
+        "Your inquiry response",
+        paragraph(escapeHtml(input.message).replace(/\n/g, "<br />")),
+      ),
     });
   }
 
@@ -157,7 +211,10 @@ export class NotificationService {
     await sendEmail({
       to: input.to,
       subject: input.subject,
-      html: `<p>${input.message.replace(/\n/g, "<br />")}</p>`,
+      html: `
+        <p>${input.message.replace(/\n/g, "<br />")}</p>
+        <p>— Habib and Sons</p>
+      `,
     });
   }
 }

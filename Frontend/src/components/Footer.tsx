@@ -35,10 +35,9 @@ export default function Footer() {
             <div className="font-manrope text-[9px] tracking-[0.5em] uppercase text-champagne/50 mb-6">Reach Us</div>
             <div className="space-y-3">
               {[
-                { label: 'Workshop', value: '47-B Industrial Estate, Faisalabad' },
-                { label: 'Showroom', value: 'M.M. Alam Road, Gulberg III' },
-                { label: 'Phone', value: '+92 300 123 4567' },
-                { label: 'Email', value: 'studio@habibandsons.pk' },
+                { label: 'Address', value: 'Dijkot main bus stop near Bank of Punjab, District Faisalabad Sadar Tehsil Faisalabad' },
+                { label: 'Phone', value: '+92 306 6162376' },
+                { label: 'Email', value: 'business.habibandsons@gmail.com' },
               ].map((item) => (
                 <div key={item.label} className="flex gap-4">
                   <span className="font-manrope text-[9px] tracking-[0.3em] uppercase text-champagne/40 w-16 flex-shrink-0 mt-0.5">

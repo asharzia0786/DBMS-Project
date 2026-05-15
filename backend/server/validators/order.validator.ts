@@ -2,12 +2,18 @@ import { z } from "zod";
 
 import { ORDER_STATUSES } from "../types/workflow";
 
+const orderItemSchema = z.object({
+  productId: z.string().uuid(),
+  quantity: z.number().int().positive(),
+});
+
 export const createOrderSchema = z.object({
   type: z.string().trim().min(1),
   totalAmount: z.number().int().positive(),
   paymentStatus: z.string().trim().min(1).default("PENDING"),
   paymentMethod: z.string().trim().min(1).optional(),
   customerEmail: z.string().trim().email().optional(),
+  items: z.array(orderItemSchema).min(1),
 });
 
 export const orderListQuerySchema = z.object({
@@ -25,3 +31,4 @@ export const orderIdParamsSchema = z.object({
 });
 
 export type OrderListQuery = z.infer<typeof orderListQuerySchema>;
+export type OrderItemInput = z.infer<typeof orderItemSchema>;

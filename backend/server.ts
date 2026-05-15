@@ -6,6 +6,7 @@ import helmet from "helmet";
 import morgan from "morgan";
 
 import apiRouter from "./app/api";
+import { startNotificationWorker } from "./server/integrations/notification-worker";
 import { errorHandler } from "./server/middleware/error-handler";
 import { allowedFrontendOrigins, env, isClerkConfigured } from "./server/utils/env";
 
@@ -17,6 +18,8 @@ if (
 }
 
 const app = express();
+
+startNotificationWorker();
 
 app.set("trust proxy", 1);
 app.use(helmet());

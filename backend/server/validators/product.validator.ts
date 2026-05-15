@@ -4,11 +4,12 @@ export const createProductSchema = z.object({
   name: z.string().trim().min(3),
   slug: z
     .string()
-    .trim()
+  .trim()
     .min(3)
     .regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/, "Slug must be lowercase words separated by hyphens."),
   description: z.string().trim().optional(),
   basePrice: z.number().int().positive(),
+  stock: z.number().int().min(0).default(0),
   category: z.string().trim().min(2).max(120).optional(),
   material: z.string().trim().min(2).max(120).optional(),
   finish: z.string().trim().min(2).max(120).optional(),

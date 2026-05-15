@@ -43,6 +43,22 @@ This backend is intentionally separate from `clerk-nextjs` and focuses on busine
    ```bash
    npm run dev
    ```
+   The API process starts the notification worker automatically.
+
+## Automated Resend emails
+
+The backend can send these emails through Resend:
+
+- Order confirmation when a customer places an order
+- Logistics / shipping update when an order reaches `SHIPPED`
+- Order status updates for admin status changes and cancellations
+- Custom quote responses
+- Inquiry responses from the admin inbox
+
+Required env values:
+
+- `RESEND_API_KEY`
+- `EMAIL_FROM` (verified sender in Resend)
 
 ## API
 

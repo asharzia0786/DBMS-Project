@@ -49,12 +49,21 @@ export default function Cart() {
                   <div>
                     <h2 className="font-cormorant text-2xl text-beige">{item.name}</h2>
                     <p className="mt-2 font-manrope text-sm text-champagne">{formatCurrency(item.price)}</p>
+                    <p className="mt-2 font-manrope text-[10px] uppercase tracking-[0.22em] text-beige/45">
+                      {item.stock <= 0 ? 'Out of stock' : `${item.stock} available`}
+                    </p>
                     <div className="mt-5 inline-flex items-center border border-champagne/20">
                       <button type="button" onClick={() => updateQuantity(item.productId, item.quantity - 1)} className="p-3 text-champagne" aria-label="Decrease quantity">
                         <Minus size={15} />
                       </button>
                       <span className="w-10 text-center font-manrope text-sm">{item.quantity}</span>
-                      <button type="button" onClick={() => updateQuantity(item.productId, item.quantity + 1)} className="p-3 text-champagne" aria-label="Increase quantity">
+                      <button
+                        type="button"
+                        onClick={() => updateQuantity(item.productId, item.quantity + 1)}
+                        disabled={item.stock <= 0 || item.quantity >= item.stock}
+                        className="p-3 text-champagne disabled:opacity-40"
+                        aria-label="Increase quantity"
+                      >
                         <Plus size={15} />
                       </button>
                     </div>
