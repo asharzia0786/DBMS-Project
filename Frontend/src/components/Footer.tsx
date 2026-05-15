@@ -6,7 +6,7 @@ export default function Footer() {
           {/* Brand */}
           <div>
             <div className="font-cormorant text-champagne text-2xl tracking-[0.15em] font-light uppercase mb-3">
-              Habib & Sons
+              Habib and Sons
             </div>
             <div className="font-manrope text-[9px] tracking-[0.4em] text-beige/30 uppercase mb-6">
               Master Craftsmen · Faisalabad
@@ -54,7 +54,7 @@ export default function Footer() {
         {/* Bottom bar */}
         <div className="pt-8 border-t border-champagne/10 flex flex-col md:flex-row items-center justify-between gap-4">
           <span className="font-manrope text-[9px] tracking-[0.3em] uppercase text-beige/20">
-            &copy; 2026 Habib & Sons. All rights reserved.
+            &copy; 2026 Habib and Sons. All rights reserved.
           </span>
             <span className="font-manrope text-[9px] tracking-[0.3em] uppercase text-beige/20">
             Handcrafted in Faisalabad, Pakistan

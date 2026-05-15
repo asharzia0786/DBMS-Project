@@ -102,7 +102,7 @@ export class NotificationService {
       subject: `Order received (#${input.orderId.slice(0, 8)})`,
       html: `
         <h1>We received your order</h1>
-        <p>Thank you for placing your order with Habib & Sons.</p>
+        <p>Thank you for placing your order with Habib and Sons.</p>
         <p><strong>Total:</strong> ${money(input.amount)}</p>
         <p>Our team will confirm production and delivery details shortly.</p>
       `,

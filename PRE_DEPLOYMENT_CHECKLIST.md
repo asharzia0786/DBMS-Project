@@ -496,7 +496,7 @@ curl https://luxury-cnc-api.up.railway.app/health
 
 # 2. Import GitHub repository
 # - Click "New Project"
-# - Select your DBMS-Project repository
+# - Select your Habib and Sons repository
 # - Vercel detects Vite automatically
 
 # 3. Environment variables

@@ -1,4 +1,4 @@
-# DBMS Project - Complete API & Configuration Guide
+# Habib and Sons - Complete API & Configuration Guide
 
 A luxury CNC furniture e-commerce platform with custom order management, built with React + Express + PostgreSQL.
 
@@ -56,7 +56,7 @@ npm run dev
 ### Project Structure
 
 ```
-DBMS Project/
+Habib and Sons/
 ├── backend/                          # Express + TypeScript API
 │   ├── app/api/                      # Route handlers
 │   │   ├── products.routes.ts
@@ -1069,7 +1069,7 @@ npm run build
 Update `vite.config.ts`:
 ```typescript
 export default {
-  base: '/DBMS-Project/',
+  base: '/habib-and-sons/',
   // ... rest of config
 };
 ```

@@ -1,4 +1,4 @@
-# DBMS Project - Luxury CNC Furniture E-Commerce Platform
+# Habib and Sons - Luxury CNC Furniture E-Commerce Platform
 
 A full-stack e-commerce platform for luxury CNC furniture with custom order management, built with React + Vite + Express + PostgreSQL.
 

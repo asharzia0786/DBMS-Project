@@ -97,3 +97,6 @@ or
    npm run start
    ```
 3. Point frontend `VITE_API_BASE_URL` to your deployed backend `/api` URL.
+
+See `../PRODUCTION_SETUP.md` for the full service-by-service setup checklist.
+See `../UPSTASH_SETUP.md` for the Redis and worker setup.

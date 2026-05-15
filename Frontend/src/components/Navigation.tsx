@@ -6,10 +6,10 @@ import { useCart } from '../contexts/cart';
 import { isAdminUser } from '../lib/auth-role';
 
 const navLinks = [
-  { label: 'Collection', href: '#collection' },
-  { label: 'Craftsmanship', href: '#craftsmanship' },
-  { label: 'Workshop', href: '#workshop' },
-  { label: 'Contact', href: '#contact' },
+  { label: 'Collection', href: '/#collection' },
+  { label: 'Craftsmanship', href: '/#craftsmanship' },
+  { label: 'Workshop', href: '/#workshop' },
+  { label: 'Contact', href: '/#contact' },
 ];
 
 export default function Navigation() {
@@ -73,7 +73,7 @@ export default function Navigation() {
           {/* Logo */}
           <a href="#" className="flex flex-col leading-none">
             <span className="font-cormorant text-champagne text-xl tracking-[0.2em] font-light uppercase">
-              Habib & Sons
+              Habib and Sons
             </span>
             <span className="font-manrope text-[10px] tracking-[0.4em] text-beige/40 uppercase mt-0.5">
               Master Craftsmen · Faisalabad
@@ -81,20 +81,20 @@ export default function Navigation() {
           </a>
 
           {/* Desktop Links */}
-          <div className="hidden xl:flex items-center gap-7">
+          <div className="hidden lg:flex items-center gap-5 xl:gap-7">
             {navLinks.map((link) => (
               <a
                 key={link.label}
                 href={link.href}
-                className="font-manrope text-[10px] tracking-[0.22em] text-beige/60 hover:text-champagne uppercase transition-colors duration-300"
+                className="font-manrope text-[9px] xl:text-[10px] tracking-[0.2em] text-beige/60 hover:text-champagne uppercase transition-colors duration-300"
               >
                 {link.label}
               </a>
             ))}
             <div className="ml-2 flex items-center gap-4 border-l border-champagne/15 pl-5">
               <a
-                href="#contact"
-                className="font-manrope text-[10px] tracking-[0.24em] uppercase border border-champagne/35 text-champagne px-4 py-2 hover:bg-champagne hover:text-void transition-all duration-300"
+                href="/#contact"
+                className="font-manrope text-[9px] xl:text-[10px] tracking-[0.22em] uppercase border border-champagne/35 text-champagne px-4 py-2 hover:bg-champagne hover:text-void transition-all duration-300"
               >
                 Consult
               </a>
@@ -113,7 +113,7 @@ export default function Navigation() {
               <SignedOut>
                 <a
                   href="/login"
-                  className="inline-flex items-center gap-1.5 font-manrope text-[10px] tracking-[0.18em] uppercase text-beige/70 hover:text-champagne transition-colors duration-300"
+                  className="inline-flex items-center gap-1.5 font-manrope text-[9px] xl:text-[10px] tracking-[0.18em] uppercase text-beige/70 hover:text-champagne transition-colors duration-300"
                 >
                   <LogIn size={14} />
                   Login
@@ -123,7 +123,7 @@ export default function Navigation() {
                 {isAdmin ? (
                   <a
                     href="/admin"
-                    className="inline-flex items-center gap-1.5 font-manrope text-[10px] tracking-[0.18em] uppercase text-champagne hover:text-gold-200 transition-colors duration-300"
+                    className="inline-flex items-center gap-1.5 font-manrope text-[9px] xl:text-[10px] tracking-[0.18em] uppercase text-champagne hover:text-gold-200 transition-colors duration-300"
                   >
                     <LayoutDashboard size={14} />
                     Admin
@@ -131,7 +131,7 @@ export default function Navigation() {
                 ) : null}
                 <a
                   href="/profile"
-                  className="inline-flex items-center gap-1.5 font-manrope text-[10px] tracking-[0.18em] uppercase text-beige/70 hover:text-champagne transition-colors duration-300"
+                  className="inline-flex items-center gap-1.5 font-manrope text-[9px] xl:text-[10px] tracking-[0.18em] uppercase text-beige/70 hover:text-champagne transition-colors duration-300"
                 >
                   <UserRound size={14} />
                   Profile
@@ -147,14 +147,25 @@ export default function Navigation() {
             </div>
           </div>
 
-          {/* Mobile Menu Toggle */}
-          <button
-            className="xl:hidden text-champagne"
-            onClick={() => setMenuOpen((v) => !v)}
-            aria-label="Toggle menu"
-          >
-            {menuOpen ? <X size={22} /> : <Menu size={22} />}
-          </button>
+          <div className="flex items-center gap-2 lg:hidden">
+            <SignedOut>
+              <a
+                href="/login"
+                className="inline-flex items-center gap-1.5 border border-champagne/25 px-3 py-2 font-manrope text-[10px] uppercase tracking-[0.18em] text-beige/75 hover:border-champagne hover:text-champagne transition-colors duration-300"
+              >
+                <LogIn size={13} />
+                Login
+              </a>
+            </SignedOut>
+            <button
+              className="text-champagne"
+              onClick={() => setMenuOpen((v) => !v)}
+              aria-label="Toggle menu"
+            >
+              {menuOpen ? <X size={22} /> : <Menu size={22} />}
+            </button>
+          </div>
+
         </div>
       </motion.nav>
 
