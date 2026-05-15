@@ -10,10 +10,11 @@ type ApiFailure = {
 
 type ApiEnvelope<T> = ApiSuccess<T> | ApiFailure;
 
-export const API_BASE_URL = (import.meta.env.VITE_API_BASE_URL || "http://localhost:4000/api").replace(
-  /\/$/,
-  "",
-);
+const configuredApiBaseUrl = import.meta.env.VITE_API_BASE_URL?.trim();
+
+export const API_BASE_URL = (
+  configuredApiBaseUrl || (import.meta.env.DEV ? "/api" : "http://localhost:4000/api")
+).replace(/\/$/, "");
 
 export type ProductImage = {
   id: string;
@@ -174,6 +175,14 @@ export async function request<T>(path: string, init?: RequestInit): Promise<T> {
     },
   });
 
+  const contentType = response.headers.get("content-type") || "";
+  if (!contentType.includes("application/json")) {
+    const text = await response.text();
+    throw new Error(
+      `API returned ${response.status} ${response.statusText} instead of JSON. Check VITE_API_BASE_URL and backend routing. Response starts with: ${text.slice(0, 80)}`,
+    );
+  }
+
   const body = (await response.json()) as ApiEnvelope<T>;
 
   if (!response.ok || !body.success) {
@@ -244,6 +253,15 @@ export function updateOrderStatus(token: string, id: string, status: string): Pr
       Authorization: `Bearer ${token}`,
     },
     body: JSON.stringify({ status }),
+  });
+}
+
+export function cancelOrder(token: string, id: string): Promise<Order> {
+  return request<Order>(`/orders/${id}/cancel`, {
+    method: "PATCH",
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
   });
 }
 

@@ -4,6 +4,8 @@ import type { OrderStatus } from "../types/workflow";
 import { AppError } from "../utils/app-error";
 import type { OrderListQuery } from "../validators/order.validator";
 
+const CANCELLABLE_STATUSES: OrderStatus[] = ["PENDING", "PAID", "PROCESSING"];
+
 export class OrderService {
   constructor(
     private readonly orderRepository: OrderRepository,
@@ -91,6 +93,45 @@ export class OrderService {
           console.error("Order status email failed", error);
         });
     }
+    return updated;
+  }
+
+  public async cancel(input: { id: string; userId: string; isAdmin: boolean }) {
+    const order = await this.orderRepository.findById(input.id);
+    if (!order) {
+      throw new AppError("Order not found.", "ORDER_NOT_FOUND", 404);
+    }
+
+    if (!input.isAdmin && order.userId !== input.userId) {
+      throw new AppError("Order not found.", "ORDER_NOT_FOUND", 404);
+    }
+
+    if (order.status === "CANCELLED") {
+      throw new AppError("Order is already cancelled.", "ORDER_ALREADY_CANCELLED", 400);
+    }
+
+    if (!CANCELLABLE_STATUSES.includes(order.status as OrderStatus)) {
+      throw new AppError(
+        "This order can no longer be cancelled.",
+        "ORDER_NOT_CANCELLABLE",
+        400,
+      );
+    }
+
+    const updated = await this.orderRepository.updateStatus(input.id, "CANCELLED");
+    if (updated.customerEmail && this.notificationService) {
+      await this.notificationService
+        .sendOrderStatusUpdate({
+          to: updated.customerEmail,
+          orderId: updated.id,
+          status: updated.status,
+        })
+        .catch((error) => {
+          // eslint-disable-next-line no-console
+          console.error("Order cancellation email failed", error);
+        });
+    }
+
     return updated;
   }
 }

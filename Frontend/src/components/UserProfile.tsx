@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState, type FormEvent } from 'react';
 import { useAuth, useClerk, useUser } from '@clerk/clerk-react';
 import { ArrowLeft, BadgeCheck, LogOut, MailWarning, Package, Save, UserRound } from 'lucide-react';
 
-import { fetchUserOrders, type Order } from '../lib/api';
+import { cancelOrder, fetchUserOrders, type Order } from '../lib/api';
 
 type ProfileForm = {
   firstName: string;
@@ -33,6 +33,7 @@ export default function UserProfile() {
   const [orders, setOrders] = useState<Order[]>([]);
   const [ordersLoading, setOrdersLoading] = useState(true);
   const [ordersError, setOrdersError] = useState<string | null>(null);
+  const [cancelingOrderId, setCancelingOrderId] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
   const [status, setStatus] = useState<string | null>(null);
 
@@ -106,6 +107,26 @@ export default function UserProfile() {
       setStatus(error instanceof Error ? error.message : 'Unable to update profile.');
     } finally {
       setSaving(false);
+    }
+  }
+
+  async function handleCancelOrder(orderId: string) {
+    setCancelingOrderId(orderId);
+    setOrdersError(null);
+
+    try {
+      const token = await getToken();
+      if (!token) {
+        throw new Error('Unable to read your session token.');
+      }
+
+      await cancelOrder(token, orderId);
+      const response = await fetchUserOrders(token);
+      setOrders(response.items);
+    } catch (error) {
+      setOrdersError(error instanceof Error ? error.message : 'Unable to cancel order.');
+    } finally {
+      setCancelingOrderId(null);
     }
   }
 
@@ -268,6 +289,25 @@ export default function UserProfile() {
                     <p className="mt-4 font-cormorant text-2xl text-beige">
                       {formatCurrency(order.totalAmount)}
                     </p>
+                    <div className="mt-4 flex items-center justify-between gap-3">
+                      <span className="font-manrope text-[10px] uppercase tracking-[0.2em] text-beige/45">
+                        {order.status}
+                      </span>
+                      {['PENDING', 'PAID', 'PROCESSING'].includes(order.status) ? (
+                        <button
+                          type="button"
+                          onClick={() => void handleCancelOrder(order.id)}
+                          disabled={cancelingOrderId === order.id}
+                          className="border border-champagne/25 px-3 py-2 font-manrope text-[10px] uppercase tracking-[0.2em] text-champagne hover:bg-champagne/10 disabled:opacity-50"
+                        >
+                          {cancelingOrderId === order.id ? 'Cancelling...' : 'Cancel'}
+                        </button>
+                      ) : (
+                        <span className="font-manrope text-[10px] uppercase tracking-[0.2em] text-beige/40">
+                          {order.status === 'CANCELLED' ? 'Cancelled' : 'Locked'}
+                        </span>
+                      )}
+                    </div>
                   </article>
                 ))
               )}

@@ -74,14 +74,41 @@ router.get(
 );
 
 router.patch(
+  "/:id/cancel",
+  asyncHandler(async (req, res) => {
+    const clerkId = getRequiredClerkUserId(req);
+    const user = await services.userService.ensureUserFromClerkId(clerkId);
+    const params = orderIdParamsSchema.parse(req.params);
+
+    const data = await services.orderService.cancel({
+      id: params.id,
+      userId: user.id,
+      isAdmin: user.role === "ADMIN",
+    });
+
+    return sendSuccess(res, data);
+  }),
+);
+
+router.patch(
   "/:id/status",
   asyncHandler(async (req, res) => {
     const clerkId = getRequiredClerkUserId(req);
     const user = await services.userService.ensureUserFromClerkId(clerkId);
-    services.authzService.assertAdmin(user);
 
     const payload = updateOrderStatusSchema.parse(req.body);
     const params = orderIdParamsSchema.parse(req.params);
+
+    if (payload.status === "CANCELLED") {
+      const data = await services.orderService.cancel({
+        id: params.id,
+        userId: user.id,
+        isAdmin: user.role === "ADMIN",
+      });
+      return sendSuccess(res, data);
+    }
+
+    services.authzService.assertAdmin(user);
     const data = await services.orderService.updateStatus({
       id: params.id,
       status: payload.status,

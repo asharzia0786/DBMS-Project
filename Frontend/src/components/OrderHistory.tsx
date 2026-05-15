@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { useAuth } from '@clerk/clerk-react';
 import { ArrowLeft, PackageCheck } from 'lucide-react';
 
-import { fetchUserOrders, type Order } from '../lib/api';
+import { cancelOrder, fetchUserOrders, type Order } from '../lib/api';
 
 function formatCurrency(value: number) {
   return new Intl.NumberFormat('en-PK', { style: 'currency', currency: 'PKR', maximumFractionDigits: 0 }).format(value);
@@ -13,6 +13,14 @@ export default function OrderHistory() {
   const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [cancelingId, setCancelingId] = useState<string | null>(null);
+
+  async function loadOrders() {
+    const token = await getToken();
+    if (!token) throw new Error('Unable to load your session token.');
+    const response = await fetchUserOrders(token, 1, 20);
+    setOrders(response.items);
+  }
 
   useEffect(() => {
     let active = true;
@@ -33,6 +41,25 @@ export default function OrderHistory() {
       active = false;
     };
   }, [getToken]);
+
+  async function handleCancel(orderId: string) {
+    setCancelingId(orderId);
+    setError(null);
+
+    try {
+      const token = await getToken();
+      if (!token) {
+        throw new Error('Unable to read your session token.');
+      }
+
+      await cancelOrder(token, orderId);
+      await loadOrders();
+    } catch (cancelError) {
+      setError(cancelError instanceof Error ? cancelError.message : 'Unable to cancel order.');
+    } finally {
+      setCancelingId(null);
+    }
+  }
 
   return (
     <main className="min-h-screen bg-void px-6 py-10 text-beige">
@@ -72,7 +99,23 @@ export default function OrderHistory() {
                   <div key={step} className={`h-2 ${step === order.status ? 'bg-champagne' : 'bg-champagne/15'}`} />
                 ))}
               </div>
-              <p className="mt-5 font-cormorant text-2xl text-champagne">{formatCurrency(order.totalAmount)}</p>
+              <div className="mt-5 flex flex-wrap items-center justify-between gap-4">
+                <p className="font-cormorant text-2xl text-champagne">{formatCurrency(order.totalAmount)}</p>
+                {['PENDING', 'PAID', 'PROCESSING'].includes(order.status) ? (
+                  <button
+                    type="button"
+                    onClick={() => void handleCancel(order.id)}
+                    disabled={cancelingId === order.id}
+                    className="border border-champagne/30 px-4 py-2 font-manrope text-[10px] uppercase tracking-[0.24em] text-champagne hover:bg-champagne/10 disabled:opacity-50"
+                  >
+                    {cancelingId === order.id ? 'Cancelling...' : 'Cancel order'}
+                  </button>
+                ) : (
+                  <span className="font-manrope text-[10px] uppercase tracking-[0.22em] text-beige/40">
+                    {order.status === 'CANCELLED' ? 'Order cancelled' : 'Cancellation unavailable'}
+                  </span>
+                )}
+              </div>
             </article>
           ))}
         </section>

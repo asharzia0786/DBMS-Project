@@ -125,11 +125,14 @@ export class NotificationService {
     orderId: string;
     status: string;
   }): Promise<void> {
+    const isCancelled = input.status === "CANCELLED";
     await sendEmail({
       to: input.to,
-      subject: `Order status updated (#${input.orderId.slice(0, 8)})`,
+      subject: isCancelled
+        ? `Order cancelled (#${input.orderId.slice(0, 8)})`
+        : `Order status updated (#${input.orderId.slice(0, 8)})`,
       html: `
-        <h1>Your order status changed</h1>
+        <h1>${isCancelled ? "Your order was cancelled" : "Your order status changed"}</h1>
         <p>Your order is now <strong>${input.status}</strong>.</p>
       `,
     });

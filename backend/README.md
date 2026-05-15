@@ -60,6 +60,7 @@ This backend is intentionally separate from `clerk-nextjs` and focuses on busine
 - `GET /api/orders` (auth, current user's orders)
 - `GET /api/orders/admin` (admin)
 - `GET /api/orders/:id` (auth, owner or admin)
+- `PATCH /api/orders/:id/cancel` (auth, owner or admin, cancellable orders only)
 - `POST /api/orders` (auth)
 - `PATCH /api/orders/:id/status` (admin)
 - `GET /api/media/upload-signature` (admin)

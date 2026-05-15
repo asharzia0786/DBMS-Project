@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import { useAuth } from '@clerk/clerk-react';
 
-import { fetchAdminOrders, updateOrderStatus, type Order } from '../../lib/api';
+import { cancelOrder, fetchAdminOrders, updateOrderStatus, type Order } from '../../lib/api';
 
 const statuses = ['PENDING', 'PROCESSING', 'SHIPPED', 'DELIVERED'];
 
@@ -40,6 +40,20 @@ export default function OrderManagement() {
     }
   }
 
+  async function cancel(orderId: string) {
+    if (!token) return;
+    setUpdatingId(orderId);
+    setError(null);
+    try {
+      await cancelOrder(token, orderId);
+      await load(token);
+    } catch (cancelError) {
+      setError(cancelError instanceof Error ? cancelError.message : 'Unable to cancel order.');
+    } finally {
+      setUpdatingId(null);
+    }
+  }
+
   return (
     <div>
       <p className="font-manrope text-[11px] uppercase tracking-[0.35em] text-champagne">Orders</p>
@@ -48,9 +62,9 @@ export default function OrderManagement() {
       <div className="mt-8 space-y-4">
         {orders.map((order) => (
           <article key={order.id} className="glass-card p-5">
-            <div className="flex flex-wrap items-start justify-between gap-4">
-              <div>
-                <h2 className="font-cormorant text-3xl">{order.type}</h2>
+              <div className="flex flex-wrap items-start justify-between gap-4">
+                <div>
+                  <h2 className="font-cormorant text-3xl">{order.type}</h2>
                 <p className="mt-1 font-manrope text-xs text-beige/45">
                   #{order.id} · PKR {order.totalAmount.toLocaleString('en-PK')} · Status: {order.status}
                 </p>
@@ -72,10 +86,29 @@ export default function OrderManagement() {
                   </button>
                 ))}
               </div>
-            </div>
-          </article>
-        ))}
-      </div>
+              </div>
+              <div className="mt-4 flex items-center justify-between gap-3">
+                <span className="font-manrope text-[10px] uppercase tracking-[0.2em] text-beige/45">
+                  {order.status}
+                </span>
+                {['PENDING', 'PAID', 'PROCESSING'].includes(order.status) ? (
+                  <button
+                    type="button"
+                    onClick={() => void cancel(order.id)}
+                    disabled={updatingId === order.id}
+                    className="border border-champagne/25 px-3 py-2 font-manrope text-[10px] uppercase tracking-[0.18em] text-champagne hover:bg-champagne/10 disabled:opacity-50"
+                  >
+                    {updatingId === order.id ? 'Cancelling...' : 'Cancel order'}
+                  </button>
+                ) : (
+                  <span className="font-manrope text-[10px] uppercase tracking-[0.2em] text-beige/40">
+                    {order.status === 'CANCELLED' ? 'Already cancelled' : 'Locked'}
+                  </span>
+                )}
+              </div>
+            </article>
+          ))}
+        </div>
     </div>
   );
 }
