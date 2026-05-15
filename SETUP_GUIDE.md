@@ -1,4 +1,4 @@
-# DBMS Project - Complete Setup Guide
+# Habib and Sons - Complete Setup Guide
 
 Step-by-step guide to get the project running locally.
 
@@ -85,9 +85,9 @@ postgres=# \q
 ### Navigate to Project
 
 ```bash
-cd F:\DBMS Project\backend
+cd F:\Habib and Sons\backend
 # or
-cd ~/path/to/DBMS-Project/backend
+cd ~/path/to/habib-and-sons/backend
 ```
 
 ### Install Dependencies
@@ -214,7 +214,7 @@ VITE_CLERK_PUBLISHABLE_KEY=
 ### Terminal 1 - Backend
 
 ```bash
-cd F:\DBMS Project\backend
+cd F:\Habib and Sons\backend
 npm run dev
 ```
 
@@ -226,7 +226,7 @@ Backend listening on http://localhost:4000
 ### Terminal 2 - Frontend
 
 ```bash
-cd F:\DBMS Project\Frontend
+cd F:\Habib and Sons\Frontend
 npm run dev
 ```
 
@@ -456,7 +456,7 @@ Then restart backend.
 ## Project Structure Reference
 
 ```
-DBMS Project/
+Habib and Sons/
 ├── backend/
 │   ├── app/api/                    # API routes
 │   ├── server/

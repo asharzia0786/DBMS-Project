@@ -162,7 +162,7 @@ export default function Hero() {
           transition={{ duration: 0.55, delay: 0.1 }}
           className="mx-auto mt-8 max-w-xl font-cormorant text-[clamp(1.1rem,2.4vw,1.55rem)] font-light tracking-wide text-beige/62"
         >
-          Habib & Sons designs retail-ready furniture, wall decor, and custom CNC pieces for homes,
+          Habib and Sons designs retail-ready furniture, wall decor, and custom CNC pieces for homes,
           offices, and hospitality interiors across Pakistan.
         </motion.p>
 

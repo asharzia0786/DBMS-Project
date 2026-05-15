@@ -15,7 +15,7 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
       <div className="grid min-h-screen lg:grid-cols-[260px_1fr]">
         <aside className="border-b border-champagne/10 bg-walnut-900/80 p-5 lg:border-b-0 lg:border-r">
           <a href="/" className="block">
-            <span className="font-cormorant text-xl uppercase tracking-[0.2em] text-champagne">Habib & Sons</span>
+            <span className="font-cormorant text-xl uppercase tracking-[0.2em] text-champagne">Habib and Sons</span>
             <span className="mt-1 block font-manrope text-[10px] uppercase tracking-[0.3em] text-beige/40">Admin</span>
           </a>
           <nav className="mt-8 grid gap-2">

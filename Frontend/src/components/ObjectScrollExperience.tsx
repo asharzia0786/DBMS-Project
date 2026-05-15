@@ -1,5 +1,5 @@
-import { useRef } from 'react';
-import { motion, MotionValue, useScroll, useTransform } from 'framer-motion';
+import { useRef, useState } from 'react';
+import { AnimatePresence, motion, MotionValue, useScroll, useTransform, useMotionValueEvent } from 'framer-motion';
 
 type Stage = {
   id: string;
@@ -161,39 +161,9 @@ function DetailPlate({
   );
 }
 
-function StageCopy({
-  stage,
-  index,
-  progress,
-}: {
-  stage: Stage;
-  index: number;
-  progress: MotionValue<number>;
-}) {
-  const { start, end } = stageWindow(index);
-  const opacity = useTransform(progress, [start, start + 0.015, end - 0.012, end], [0, 1, 1, 0]);
-  const y = useTransform(progress, [start, start + 0.025, end], [16, 0, -10]);
-
-  return (
-    <motion.div
-      className="absolute bottom-20 left-6 z-30 max-w-[430px] lg:left-12"
-      style={{ opacity, y }}
-    >
-      <span className="mb-3 block font-manrope text-[9px] uppercase tracking-[0.5em] text-champagne/70">
-        {stage.kicker}
-      </span>
-      <h2 className="font-playfair text-[clamp(2rem,6vw,5.4rem)] leading-[0.92] text-beige">
-        {stage.title}
-      </h2>
-      <p className="mt-5 max-w-sm font-manrope text-sm leading-7 text-beige/50">
-        {stage.note}
-      </p>
-    </motion.div>
-  );
-}
-
 export default function ObjectScrollExperience() {
   const sectionRef = useRef<HTMLDivElement>(null);
+  const [activeStageIndex, setActiveStageIndex] = useState(0);
   const { scrollYProgress } = useScroll({
     target: sectionRef,
     offset: ['start start', 'end end'],
@@ -205,6 +175,11 @@ export default function ObjectScrollExperience() {
   const progressWidth = useTransform(scrollYProgress, [0, 1], ['0%', '100%']);
   const apertureScale = useTransform(scrollYProgress, [0, 0.5, 1], [0.75, 1.08, 0.86]);
   const apertureOpacity = useTransform(scrollYProgress, [0, 0.12, 0.9, 1], [0.15, 0.45, 0.45, 0.18]);
+
+  useMotionValueEvent(scrollYProgress, 'change', (latest) => {
+    const nextIndex = Math.min(STAGES.length - 1, Math.max(0, Math.round(latest * (STAGES.length - 1))));
+    setActiveStageIndex((current) => (current === nextIndex ? current : nextIndex));
+  });
 
   return (
     <section
@@ -235,21 +210,6 @@ export default function ObjectScrollExperience() {
           className="absolute inset-0 object-scroll-perspective"
           style={{ rotateZ: rigRotate, scale: rigScale }}
         >
-          <motion.div
-            className="absolute inset-0 flex items-center justify-center px-5 opacity-20 blur-[2px]"
-            style={{
-              scale: useTransform(scrollYProgress, [0, 1], [0.92, 1.08]),
-              rotateY: useTransform(scrollYProgress, [0, 1], [-10, 10]),
-              y: useTransform(scrollYProgress, [0, 1], [18, -18]),
-            }}
-          >
-            <img
-              src="/assets/product-crops/carved-circle-front.webp"
-              alt=""
-              className="w-[min(92vw,980px)] select-none object-contain"
-              draggable={false}
-            />
-          </motion.div>
           {STAGES.map((stage, index) => (
             <ProductFrame
               key={stage.id}
@@ -267,14 +227,26 @@ export default function ObjectScrollExperience() {
           ))}
         </motion.div>
 
-        {STAGES.map((stage, index) => (
-          <StageCopy
-            key={stage.id}
-            stage={stage}
-            index={index}
-            progress={scrollYProgress}
-          />
-        ))}
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={STAGES[activeStageIndex].id}
+            className="absolute bottom-20 left-6 z-30 max-w-[430px] lg:left-12 pointer-events-none"
+            initial={{ opacity: 0, y: 16 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -10 }}
+            transition={{ duration: 0.3, ease: 'easeOut' }}
+          >
+            <span className="mb-3 block font-manrope text-[9px] uppercase tracking-[0.5em] text-champagne/70">
+              {STAGES[activeStageIndex].kicker}
+            </span>
+            <h2 className="font-playfair text-[clamp(2rem,6vw,5.4rem)] leading-[0.92] text-beige">
+              {STAGES[activeStageIndex].title}
+            </h2>
+            <p className="mt-5 max-w-sm font-manrope text-sm leading-7 text-beige/50">
+              {STAGES[activeStageIndex].note}
+            </p>
+          </motion.div>
+        </AnimatePresence>
 
         <div className="absolute right-6 top-24 z-30 hidden text-right lg:block">
           <p className="font-manrope text-[9px] uppercase tracking-[0.45em] text-champagne/65">

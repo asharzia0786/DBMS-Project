@@ -1,8 +1,10 @@
 import { useEffect, useMemo, useState } from 'react';
 import { ArrowLeft, Minus, Plus, ShoppingBag, ZoomIn, ZoomOut, X } from 'lucide-react';
 
+import SeoHead from './SeoHead';
 import { useCart } from '../contexts/cart';
 import { fetchProductBySlug, type Product } from '../lib/api';
+import { buildProductSeo } from '../lib/seo';
 
 type ProductDetailsPageProps = {
   slug: string;
@@ -63,6 +65,13 @@ export default function ProductDetailsPage({ slug }: ProductDetailsPageProps) {
   }, [product]);
 
   const selectedImage = images[Math.min(selectedImageIndex, Math.max(images.length - 1, 0))];
+  const productSeo = buildProductSeo({
+    slug,
+    name: product?.name,
+    description: product?.description || undefined,
+    imageUrl: selectedImage?.imageUrl,
+    category: product?.category || undefined,
+  });
 
   const increaseQuantity = () => setQuantity((current) => current + 1);
   const decreaseQuantity = () => setQuantity((current) => Math.max(1, current - 1));
@@ -83,8 +92,10 @@ export default function ProductDetailsPage({ slug }: ProductDetailsPageProps) {
   };
 
   return (
-    <main className="min-h-screen bg-void px-6 py-10 text-beige">
-      <div className="mx-auto max-w-7xl">
+    <>
+      <SeoHead metadata={productSeo} />
+      <main className="min-h-screen bg-void px-6 py-10 text-beige">
+        <div className="mx-auto max-w-7xl">
         <a
           href="/collection"
           className="inline-flex items-center gap-2 font-manrope text-[11px] uppercase tracking-[0.24em] text-beige/60 hover:text-champagne"
@@ -217,56 +228,57 @@ export default function ProductDetailsPage({ slug }: ProductDetailsPageProps) {
             </div>
           </section>
         ) : null}
-      </div>
-
-      {zoomOpen && product ? (
-        <div
-          role="dialog"
-          aria-modal="true"
-          className="fixed inset-0 z-[100] flex items-center justify-center bg-black/90 px-6 py-8"
-        >
-          <button
-            type="button"
-            onClick={() => setZoomOpen(false)}
-            className="absolute right-6 top-6 inline-flex h-10 w-10 items-center justify-center border border-champagne/30 text-champagne hover:bg-champagne/10"
-            aria-label="Close zoom view"
-          >
-            <X size={16} />
-          </button>
-
-          <div className="absolute left-6 top-6 inline-flex items-center gap-2 bg-void/75 px-4 py-2 font-manrope text-[10px] uppercase tracking-[0.24em] text-beige/70">
-            Zoom View
-          </div>
-
-          <div className="absolute bottom-6 left-1/2 flex -translate-x-1/2 items-center gap-3">
-            <button
-              type="button"
-              onClick={() => setZoomScale((current) => Math.max(1, current - 0.2))}
-              className="inline-flex items-center gap-2 border border-champagne/30 px-4 py-2 font-manrope text-[10px] uppercase tracking-[0.24em] text-champagne hover:bg-champagne/10"
-            >
-              <ZoomOut size={14} />
-              Zoom out
-            </button>
-            <button
-              type="button"
-              onClick={() => setZoomScale((current) => Math.min(3, current + 0.2))}
-              className="inline-flex items-center gap-2 border border-champagne/30 px-4 py-2 font-manrope text-[10px] uppercase tracking-[0.24em] text-champagne hover:bg-champagne/10"
-            >
-              <ZoomIn size={14} />
-              Zoom in
-            </button>
-          </div>
-
-          <div className="max-h-full max-w-[90vw] overflow-auto">
-            <img
-              src={selectedImage.imageUrl}
-              alt={selectedImage.altText || product.name}
-              className="max-h-[80vh] max-w-full object-contain transition-transform duration-200"
-              style={{ transform: `scale(${zoomScale})`, transformOrigin: 'center center' }}
-            />
-          </div>
         </div>
-      ) : null}
-    </main>
+
+        {zoomOpen && product ? (
+          <div
+            role="dialog"
+            aria-modal="true"
+            className="fixed inset-0 z-[100] flex items-center justify-center bg-black/90 px-6 py-8"
+          >
+            <button
+              type="button"
+              onClick={() => setZoomOpen(false)}
+              className="absolute right-6 top-6 inline-flex h-10 w-10 items-center justify-center border border-champagne/30 text-champagne hover:bg-champagne/10"
+              aria-label="Close zoom view"
+            >
+              <X size={16} />
+            </button>
+
+            <div className="absolute left-6 top-6 inline-flex items-center gap-2 bg-void/75 px-4 py-2 font-manrope text-[10px] uppercase tracking-[0.24em] text-beige/70">
+              Zoom View
+            </div>
+
+            <div className="absolute bottom-6 left-1/2 flex -translate-x-1/2 items-center gap-3">
+              <button
+                type="button"
+                onClick={() => setZoomScale((current) => Math.max(1, current - 0.2))}
+                className="inline-flex items-center gap-2 border border-champagne/30 px-4 py-2 font-manrope text-[10px] uppercase tracking-[0.24em] text-champagne hover:bg-champagne/10"
+              >
+                <ZoomOut size={14} />
+                Zoom out
+              </button>
+              <button
+                type="button"
+                onClick={() => setZoomScale((current) => Math.min(3, current + 0.2))}
+                className="inline-flex items-center gap-2 border border-champagne/30 px-4 py-2 font-manrope text-[10px] uppercase tracking-[0.24em] text-champagne hover:bg-champagne/10"
+              >
+                <ZoomIn size={14} />
+                Zoom in
+              </button>
+            </div>
+
+            <div className="max-h-full max-w-[90vw] overflow-auto">
+              <img
+                src={selectedImage.imageUrl}
+                alt={selectedImage.altText || product.name}
+                className="max-h-[80vh] max-w-full object-contain transition-transform duration-200"
+                style={{ transform: `scale(${zoomScale})`, transformOrigin: 'center center' }}
+              />
+            </div>
+          </div>
+        ) : null}
+      </main>
+    </>
   );
 }

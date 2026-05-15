@@ -1,5 +1,5 @@
 import { useAuth } from '@clerk/clerk-react';
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, type ReactNode } from 'react';
 import Navigation from './components/Navigation';
 import Hero from './components/Hero';
 import ObjectScrollExperience from './components/ObjectScrollExperience';
@@ -32,12 +32,22 @@ import Dashboard from './components/admin/Dashboard';
 import InquiryManagement from './components/admin/InquiryManagement';
 import OrderManagement from './components/admin/OrderManagement';
 import ProductManagement from './components/admin/ProductManagement';
+import SeoHead from './components/SeoHead';
 import { syncCurrentUser } from './lib/api';
+import { getSeoForPath } from './lib/seo';
 
 export default function App() {
   const { isLoaded, isSignedIn, getToken } = useAuth();
   const hasSyncedUser = useRef(false);
   const path = window.location.pathname;
+  const pageSeo = getSeoForPath(path);
+
+  const renderPage = (page: ReactNode) => (
+    <>
+      <SeoHead metadata={pageSeo} />
+      {page}
+    </>
+  );
 
   useEffect(() => {
     if (!isLoaded) {
@@ -75,15 +85,15 @@ export default function App() {
   }, [getToken, isLoaded, isSignedIn]);
 
   if (path === '/login' || path.startsWith('/login/')) {
-    return <LoginPage />;
+    return renderPage(<LoginPage />);
   }
 
   if (path === '/signup' || path.startsWith('/signup/')) {
-    return <SignUpPage />;
+    return renderPage(<SignUpPage />);
   }
 
   if (path === '/profile') {
-    return (
+    return renderPage(
       <ProtectedRoute>
         <UserProfile />
       </ProtectedRoute>
@@ -91,7 +101,7 @@ export default function App() {
   }
 
   if (path === '/orders') {
-    return (
+    return renderPage(
       <ProtectedRoute>
         <OrderHistory />
       </ProtectedRoute>
@@ -99,24 +109,24 @@ export default function App() {
   }
 
   if (path === '/verify-email') {
-    return (
+    return renderPage(
       <ProtectedRoute>
         <VerifyEmailPanel />
       </ProtectedRoute>
     );
   }
 
-  if (path === '/cart') return <Cart />;
-  if (path === '/checkout') return <Checkout />;
-  if (path === '/collection') return <ProductCollectionPage />;
-  if (path === '/custom-order') return <CustomOrderForm />;
-  if (path === '/about') return <About />;
-  if (path === '/gallery') return <Gallery />;
-  if (path === '/services') return <Services />;
-  if (path === '/faqs') return <FAQs />;
-  if (path === '/contact') return <Contact />;
-  if (path === '/privacy') return <PrivacyPolicy />;
-  if (path === '/terms') return <TermsOfService />;
+  if (path === '/cart') return renderPage(<Cart />);
+  if (path === '/checkout') return renderPage(<Checkout />);
+  if (path === '/collection') return renderPage(<ProductCollectionPage />);
+  if (path === '/custom-order') return renderPage(<CustomOrderForm />);
+  if (path === '/about') return renderPage(<About />);
+  if (path === '/gallery') return renderPage(<Gallery />);
+  if (path === '/services') return renderPage(<Services />);
+  if (path === '/faqs') return renderPage(<FAQs />);
+  if (path === '/contact') return renderPage(<Contact />);
+  if (path === '/privacy') return renderPage(<PrivacyPolicy />);
+  if (path === '/terms') return renderPage(<TermsOfService />);
   if (path.startsWith('/products/')) {
     const slug = path.slice('/products/'.length).split('/')[0];
     if (slug) {
@@ -131,14 +141,14 @@ export default function App() {
     if (path === '/admin/custom-orders') adminPage = <CustomOrderManagement />;
     if (path === '/admin/inquiries') adminPage = <InquiryManagement />;
 
-    return (
+    return renderPage(
       <ProtectedRoute requireAdmin>
         <AdminLayout>{adminPage}</AdminLayout>
       </ProtectedRoute>
     );
   }
 
-  return (
+  return renderPage(
     <div className="bg-void text-beige overflow-x-hidden">
       <Navigation />
       <Hero />

@@ -55,7 +55,7 @@ export class InquiryService {
       await this.notificationService
         .sendInquiryResponse({
           to: updated.email,
-          subject: "Response to your Habib & Sons inquiry",
+          subject: "Response to your Habib and Sons inquiry",
           message: input.responseMessage,
         })
         .catch((error) => {

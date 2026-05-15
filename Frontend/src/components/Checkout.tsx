@@ -3,13 +3,7 @@ import { useAuth, useUser } from '@clerk/clerk-react';
 import { ArrowLeft, CheckCircle2 } from 'lucide-react';
 
 import { useCart } from '../contexts/cart';
-import { createOrder, createSafepaySession } from '../lib/api';
-
-const PAYMENT_METHODS = [
-  { value: 'COD', label: 'Cash on delivery' },
-  { value: 'BANK_TRANSFER', label: 'Bank transfer' },
-  { value: 'SAFEPAY', label: 'SafePay' },
-] as const;
+import { createOrder } from '../lib/api';
 
 function formatCurrency(value: number) {
   return new Intl.NumberFormat('en-PK', {
@@ -58,13 +52,6 @@ export default function Checkout() {
         paymentMethod: form.paymentMethod,
         customerEmail: user?.primaryEmailAddress?.emailAddress,
       });
-
-      if (form.paymentMethod === 'SAFEPAY') {
-        await createSafepaySession(token, {
-          orderId: order.id,
-          amount: subtotal,
-        });
-      }
 
       clearCart();
       setOrderId(order.id);
@@ -131,20 +118,15 @@ export default function Checkout() {
                 className="mt-2 w-full resize-none border border-champagne/15 bg-void/70 px-4 py-3 font-manrope text-sm text-beige outline-none focus:border-champagne"
               />
             </label>
-            <label className="block">
-              <span className="font-manrope text-[11px] uppercase tracking-[0.2em] text-beige/55">Payment method</span>
-              <select
-                value={form.paymentMethod}
-                onChange={(event) => setForm((current) => ({ ...current, paymentMethod: event.target.value }))}
-                className="mt-2 w-full border border-champagne/15 bg-void/70 px-4 py-3 font-manrope text-sm text-beige outline-none focus:border-champagne"
-              >
-                {PAYMENT_METHODS.map((method) => (
-                  <option key={method.value} value={method.value}>
-                    {method.label}
-                  </option>
-                ))}
-              </select>
-            </label>
+            <div className="rounded-sm border border-champagne/15 bg-void/70 px-4 py-3">
+              <span className="block font-manrope text-[11px] uppercase tracking-[0.2em] text-beige/55">
+                Payment method
+              </span>
+              <p className="mt-2 font-manrope text-sm text-beige/80">Cash on delivery</p>
+              <p className="mt-1 font-manrope text-[11px] leading-6 text-beige/45">
+                Online payment options are temporarily hidden.
+              </p>
+            </div>
             <label className="block">
               <span className="font-manrope text-[11px] uppercase tracking-[0.2em] text-beige/55">Notes</span>
               <textarea
