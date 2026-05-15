@@ -86,7 +86,7 @@ export default function Navigation() {
               <a
                 key={link.label}
                 href={link.href}
-                className="font-manrope text-[9px] xl:text-[10px] tracking-[0.2em] text-beige/60 hover:text-champagne uppercase transition-colors duration-300"
+                className="font-manrope text-[9px] xl:text-[10px] tracking-[0.2em] text-champagne hover:text-gold-200 uppercase transition-colors duration-300"
               >
                 {link.label}
               </a>
@@ -100,7 +100,7 @@ export default function Navigation() {
               </a>
               <a
                 href="/cart"
-                className="relative inline-flex items-center gap-2 font-manrope text-[10px] tracking-[0.2em] uppercase text-beige/70 hover:text-champagne transition-colors duration-300"
+                className="relative inline-flex items-center gap-2 font-manrope text-[10px] tracking-[0.2em] uppercase text-champagne hover:text-gold-200 transition-colors duration-300"
               >
                 <ShoppingBag size={15} />
                 Cart
@@ -113,7 +113,7 @@ export default function Navigation() {
               <SignedOut>
                 <a
                   href="/login"
-                  className="inline-flex items-center gap-1.5 font-manrope text-[9px] xl:text-[10px] tracking-[0.18em] uppercase text-beige/70 hover:text-champagne transition-colors duration-300"
+                  className="inline-flex items-center gap-1.5 font-manrope text-[9px] xl:text-[10px] tracking-[0.18em] uppercase text-champagne hover:text-gold-200 transition-colors duration-300"
                 >
                   <LogIn size={14} />
                   Login
@@ -131,7 +131,7 @@ export default function Navigation() {
                 ) : null}
                 <a
                   href="/profile"
-                  className="inline-flex items-center gap-1.5 font-manrope text-[9px] xl:text-[10px] tracking-[0.18em] uppercase text-beige/70 hover:text-champagne transition-colors duration-300"
+                  className="inline-flex items-center gap-1.5 font-manrope text-[9px] xl:text-[10px] tracking-[0.18em] uppercase text-champagne hover:text-gold-200 transition-colors duration-300"
                 >
                   <UserRound size={14} />
                   Profile
@@ -151,7 +151,7 @@ export default function Navigation() {
             <SignedOut>
               <a
                 href="/login"
-                className="inline-flex items-center gap-1.5 border border-champagne/25 px-3 py-2 font-manrope text-[10px] uppercase tracking-[0.18em] text-beige/75 hover:border-champagne hover:text-champagne transition-colors duration-300"
+                className="inline-flex items-center gap-1.5 border border-champagne/25 px-3 py-2 font-manrope text-[10px] uppercase tracking-[0.18em] text-champagne hover:border-champagne hover:text-gold-200 transition-colors duration-300"
               >
                 <LogIn size={13} />
                 Login
