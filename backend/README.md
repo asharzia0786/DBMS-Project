@@ -101,3 +101,4 @@ or
 
 See `../PRODUCTION_SETUP.md` for the full service-by-service setup checklist.
 See `../UPSTASH_SETUP.md` for the Redis and worker setup.
+See `../POSTMAN_BACKEND_TESTS.md` for a Postman test checklist.
