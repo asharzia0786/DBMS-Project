@@ -155,7 +155,7 @@ PORT=4000
 
 # Frontend URLs (for CORS)
 FRONTEND_URL=http://localhost:5173
-FRONTEND_URLS=http://localhost:5173,https://yourdomain.com
+FRONTEND_URLS=http://localhost:5173,https://habibandsons.com
 
 # Database
 DATABASE_URL=postgresql://user:password@localhost:5432/myapp?schema=public
@@ -199,7 +199,7 @@ REDIS_URL=redis://localhost:6379
 
 **PostgreSQL:**
 - Local: `postgresql://postgres:password@localhost:5432/myapp?schema=public`
-- Remote: Use hosted provider like Supabase, Railway, Render
+ - Remote: Use hosted provider like Neon or another managed PostgreSQL service
 
 **Upstash Redis (Optional):**
 1. Go to [console.upstash.com](https://console.upstash.com)
@@ -213,7 +213,7 @@ Create `Frontend/.env`:
 ```bash
 # API
 VITE_API_BASE_URL=http://localhost:4000/api
-VITE_APP_URL=http://localhost:5173
+VITE_APP_URL=https://habibandsons.com
 
 # Clerk (must match backend public key)
 VITE_CLERK_PUBLISHABLE_KEY=pk_test_xxx
@@ -234,7 +234,7 @@ VITE_CLERK_PUBLISHABLE_KEY=pk_test_xxx
 ### Base URL
 
 - **Development:** `http://localhost:4000/api`
-- **Production:** `https://your-api-domain.com/api`
+ - **Production:** `https://api.habibandsons.com/api`
 
 ### Health Check
 
@@ -798,21 +798,6 @@ sudo -u postgres createdb myapp
 
 Popular options (all have free tiers):
 
-**Supabase (Recommended):**
-1. Go to [supabase.com](https://supabase.com)
-2. Create project
-3. Copy connection string from Project Settings → Database
-4. Update `.env`:
-   ```
-   DATABASE_URL=postgresql://user:password@host:5432/postgres?schema=public
-   ```
-
-**Railway:**
-1. Create project at [railway.app](https://railway.app)
-2. Add PostgreSQL plugin
-3. Copy connection string
-4. Update `.env`
-
 **Neon:**
 1. Create database at [console.neon.tech](https://console.neon.tech)
 2. Copy connection string
@@ -979,31 +964,15 @@ Cloudinary provides secure image hosting, optimization, and transformations.
 
 ### Backend Deployment
 
-**Option 1: Railway (Recommended)**
+**Option 1: Render (Recommended)**
 
 ```bash
-# 1. Install Railway CLI
-npm i -g @railway/cli
-
-# 2. Login
-railway login
-
-# 3. Create project
-railway init
-
-# 4. Link PostgreSQL plugin
-railway add
-
-# 5. Set environment variables
-railway variables set CLERK_SECRET_KEY=sk_test_...
-railway variables set DATABASE_URL=postgresql://...
-# ... set all required vars
-
+# 1. Create a Render web service
+# 2. Connect the repository
+# 3. Set build command: npm ci && npm run build && npm run prisma:deploy
+# 4. Set start command: npm start
+# 5. Add environment variables
 # 6. Deploy
-railway up
-
-# 7. Get production URL
-railway open
 ```
 
 **Option 2: Render**
@@ -1040,18 +1009,15 @@ git push heroku main
 
 ### Frontend Deployment
 
-**Option 1: Vercel (Recommended)**
+**Option 1: Cloudflare Pages (Recommended)**
 
 ```bash
-# 1. Install Vercel CLI
-npm i -g vercel
-
-# 2. Deploy
-vercel
-
-# 3. Set environment variables
-# Project Settings → Environment Variables
-# Add VITE_API_BASE_URL pointing to your deployed backend
+# 1. Create a Cloudflare Pages project
+# 2. Connect the repository
+# 3. Build command: npm run build
+# 4. Output directory: dist
+# 5. Add environment variables
+# 6. Set VITE_API_BASE_URL to https://api.habibandsons.com/api
 ```
 
 **Option 2: Netlify**
@@ -1065,20 +1031,7 @@ npm run build
 ```
 
 **Option 3: GitHub Pages**
-
-Update `vite.config.ts`:
-```typescript
-export default {
-  base: '/habib-and-sons/',
-  // ... rest of config
-};
-```
-
-Then deploy:
-```bash
-npm run build
-# Deploy dist folder to gh-pages branch
-```
+Use only if you do not need Cloudflare DNS or custom routing.
 
 ### Environment Variables for Production
 
@@ -1086,8 +1039,8 @@ npm run build
 ```bash
 NODE_ENV=production
 PORT=4000
-FRONTEND_URL=https://yourdomain.com
-FRONTEND_URLS=https://yourdomain.com
+FRONTEND_URL=https://habibandsons.com
+FRONTEND_URLS=https://habibandsons.com,https://www.habibandsons.com
 DATABASE_URL=postgresql://... # Remote PostgreSQL
 CLERK_PUBLISHABLE_KEY=pk_live_...
 CLERK_SECRET_KEY=sk_live_...
@@ -1099,8 +1052,8 @@ CLOUDINARY_API_SECRET=...
 
 **Frontend (.env in production):**
 ```bash
-VITE_API_BASE_URL=https://your-backend-api.com/api
-VITE_APP_URL=https://yourdomain.com
+VITE_API_BASE_URL=https://api.habibandsons.com/api
+VITE_APP_URL=https://habibandsons.com
 VITE_CLERK_PUBLISHABLE_KEY=pk_live_...
 ```
 
@@ -1200,7 +1153,7 @@ npm run build
 **Solution:** Update `backend/.env`:
 ```bash
 FRONTEND_URL=http://localhost:5173  # for local dev
-FRONTEND_URLS=http://localhost:5173,https://yourdomain.com  # for production
+FRONTEND_URLS=http://localhost:5173,https://habibandsons.com,https://www.habibandsons.com  # for production
 ```
 
 ### 9. "Port already in use"

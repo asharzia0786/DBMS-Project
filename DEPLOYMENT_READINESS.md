@@ -69,36 +69,7 @@
 
 #### Option A: Managed PostgreSQL Services (Recommended)
 
-**🥇 Supabase** (Most User-Friendly)
-1. Go to https://supabase.com
-2. Sign up and create new project
-3. Choose region close to your users
-4. Wait 2-5 minutes for provisioning
-5. In "Settings" → "Database":
-   - Copy Connection String (with pooling enabled)
-   - Format: `postgresql://postgres:[PASSWORD]@[HOST]:[PORT]/[DATABASE]`
-6. Save as `DATABASE_URL` in backend `.env`
-
-**Database Details from Supabase:**
-- Host: `xxxxx.supabase.co`
-- Port: `5432`
-- Database: `postgres`
-- User: `postgres`
-- Password: Generated during setup
-- Connection String: Settings → Database → Connection String
-
-**Networking:**
-- Supabase allows connections from anywhere by default
-- For enhanced security: Add IP whitelist in Security settings
-
-**Backups:**
-- Automatic daily backups included
-- Retention: 7 days (free tier)
-- Manual backups: Available in Settings → Backups
-
----
-
-**Neon** (Fast & Reliable)
+**Neon** (Recommended)
 1. Go to https://neon.tech
 2. Sign up with GitHub/Google
 3. Create new project
@@ -115,7 +86,7 @@
 
 ---
 
-**Railway** (Easiest Integration)
+**Railway** (Alternative)
 1. Go to https://railway.app
 2. Sign up with GitHub
 3. Create new PostgreSQL service
@@ -172,7 +143,7 @@
    - Go to Settings → URLs
    - Add Allowed URLs:
      - Local: `http://localhost:5173`
-     - Production: `https://yourdomain.com`
+     - Production: `https://habibandsons.com`
 
 5. **Setup User Attributes (Optional)**
    - Customize user profiles if needed
@@ -296,16 +267,16 @@ curl -H "Authorization: Bearer <clerk-token>" \
 
 3. **Verify Sender Domain**
    - Go to Domains
-   - Add your domain: yourdomain.com
+   - Add your domain: habibandsons.com
    - Add DNS records:
      ```
      Type: TXT
-     Name: _resend.yourdomain.com
+     Name: _resend.habibandsons.com
      Value: [provided by Resend]
      
      Type: MX
-     Name: yourdomain.com
-     Value: feedback-smtp.yourdomain.com
+     Name: habibandsons.com
+     Value: feedback-smtp.habibandsons.com
      Priority: 10
      ```
    - Wait for DNS propagation (5-30 mins)
@@ -550,7 +521,7 @@ pg_dump \
 **During Production:**
 
 - Use managed database provider's backup system
-- Supabase: 7-day retention (free), 30+ days (paid)
+- Neon: use provider backups and restore points
 - AWS RDS: Configurable retention (default 7 days)
 - Daily exports to S3/Cloud Storage recommended
 
@@ -579,8 +550,8 @@ PORT=4000
 DATABASE_URL=postgresql://user:password@host:5432/dbname?schema=public
 
 # ========== REQUIRED - CORS ==========
-FRONTEND_URL=https://yourdomain.com
-FRONTEND_URLS=https://yourdomain.com,https://www.yourdomain.com
+FRONTEND_URL=https://habibandsons.com
+FRONTEND_URLS=https://habibandsons.com,https://www.habibandsons.com
 
 # ========== REQUIRED - Authentication (Clerk) ==========
 CLERK_PUBLISHABLE_KEY=pk_live_xxxxxxxxxxxxx
@@ -611,8 +582,8 @@ SENTRY_DSN=https://xxxxx@xxxxx.ingest.sentry.io/xxxxx
 
 ```bash
 # ========== REQUIRED ==========
-VITE_API_BASE_URL=https://api.yourdomain.com/api
-VITE_APP_URL=https://yourdomain.com
+VITE_API_BASE_URL=https://api.habibandsons.com/api
+VITE_APP_URL=https://habibandsons.com
 
 # ========== REQUIRED - Authentication ==========
 VITE_CLERK_PUBLISHABLE_KEY=pk_live_xxxxxxxxxxxxx
@@ -699,28 +670,16 @@ npm run build
 # Output: dist/ folder with compiled JS
 ```
 
-#### Deploy to Railway (Recommended - Easiest)
+#### Deploy to Render (Recommended)
 
 ```bash
-# 1. Create Railway account: https://railway.app
-# 2. Connect GitHub account
-# 3. Import project
-# 4. Railway auto-detects Node.js
-
-# 5. In Railway Dashboard:
-#    - Add PostgreSQL plugin (auto-linked)
-#    - Set Environment Variables
-#    - Copy from your .env (except DATABASE_URL)
-#    - DATABASE_URL: Railway auto-provides
-
-# 6. Deploy
-#    - Push to main branch on GitHub
-#    - Railway auto-deploys
-
-# 7. Verify
-#    - Check Deployments tab
-#    - View logs
-#    - Get deployed URL
+# 1. Create Render account: https://render.com
+# 2. Create a Web Service from the repo
+# 3. Set build command: npm ci && npm run build && npm run prisma:deploy
+# 4. Set start command: node dist/server.js
+# 5. Add environment variables from backend/.env
+# 6. Link a Neon DATABASE_URL
+# 7. Deploy
 ```
 
 #### Deploy to Render (Alternative)
@@ -782,18 +741,18 @@ npm run build
 # Output: dist/ folder with static files
 ```
 
-#### Deploy to Vercel (Recommended - Easiest)
+#### Deploy to Cloudflare Pages (Recommended)
 
 ```bash
-# 1. Create Vercel account: https://vercel.com
-# 2. Import GitHub project
+# 1. Create Cloudflare Pages project
+# 2. Connect GitHub repo
 # 3. Framework preset: Vite
 # 4. Build command: npm run build
 # 5. Output directory: dist
 
 # 6. Environment variables:
-VITE_API_BASE_URL=https://api.yourdomain.com/api
-VITE_APP_URL=https://yourdomain.com
+VITE_API_BASE_URL=https://api.habibandsons.com/api
+VITE_APP_URL=https://habibandsons.com
 VITE_CLERK_PUBLISHABLE_KEY=pk_live_xxxxx
 
 # 7. Deploy (automatic on GitHub push)
@@ -887,21 +846,21 @@ describe('Deployment Validation', () => {
 
 ```bash
 # 1. Backend Health
-curl https://api.yourdomain.com/health
+curl https://api.habibandsons.com/health
 # Should return: {"success":true,"data":{"status":"ok"}}
 
 # 2. Public endpoints (no auth required)
-curl https://api.yourdomain.com/api/products?page=1&pageSize=10
+curl https://api.habibandsons.com/api/products?page=1&pageSize=10
 
 # 3. Frontend loads
-curl https://yourdomain.com
+curl https://habibandsons.com
 # Should return HTML with no 404 errors
 
 # 4. CORS headers present
-curl -i https://api.yourdomain.com/health | grep -i "Access-Control"
+curl -i https://api.habibandsons.com/health | grep -i "Access-Control"
 
 # 5. Redirect HTTP to HTTPS
-curl -i http://yourdomain.com | grep -i "301\|302"
+curl -i http://habibandsons.com | grep -i "301\|302"
 ```
 
 ### Performance Validation
@@ -912,7 +871,7 @@ npm install -g artillery
 
 # Create load test file: load-test.yml
 config:
-  target: "https://api.yourdomain.com"
+  target: "https://api.habibandsons.com"
   phases:
     - duration: 60
       arrivalRate: 10
@@ -956,18 +915,18 @@ artillery run load-test.yml
         │                    │
         ▼                    ▼
     ┌─────────┐          ┌──────────┐
-    │ Vercel  │          │ Railway  │
-    │Frontend │          │Backend   │
-    │ (CDN)   │          │ (Node)   │
+    │Cloudflare│         │ Render   │
+    │  Pages   │         │ Backend  │
+    │  (CDN)   │         │  (Node)  │
     └─────────┘          └────┬─────┘
                               │
                 ┌─────────────┬┴────────────┐
                 │             │             │
                 ▼             ▼             ▼
-           ┌────────┐    ┌─────────┐   ┌────────┐
-           │Supabase│    │Upstash  │   │Resend  │
-           │PostgreSQL   │Redis    │   │Email   │
-           └────────┘    └─────────┘   └────────┘
+            ┌────────┐    ┌─────────┐   ┌────────┐
+            │ Neon   │    │Upstash  │   │Resend  │
+            │Postgres│    │Redis    │   │Email   │
+            └────────┘    └─────────┘   └────────┘
                 │
                 ▼
            ┌──────────────┐
@@ -980,9 +939,9 @@ artillery run load-test.yml
 
 | Service | Free Tier | Pro Tier | Notes |
 |---------|-----------|----------|-------|
-| Vercel (Frontend) | $0 | $20-50 | Scaling based on bandwidth |
-| Railway (Backend) | $5 credit | $10-50 | Hourly pricing |
-| Supabase (Database) | $0 | $25+ | 500MB free, then $0.125/GB |
+| Cloudflare Pages (Frontend) | $0 | low | Static hosting |
+| Render (Backend) | low | low-mid | Web service pricing |
+| Neon (Database) | $0 | low-mid | Serverless Postgres |
 | Upstash (Redis) | $0 free tier | $20+ | If using job queue |
 | Resend (Email) | 100/mo free | $20 | 1000 emails/mo included |
 | Cloudinary (Images) | 25GB free | Pay as you go | 100GB = ~$400/mo |
@@ -1043,7 +1002,7 @@ artillery run load-test.yml
 - ✅ Environment variables (provided by platform)
 - ✅ Secrets manager (AWS Secrets Manager, HashiCorp Vault)
 - ✅ Encrypted password manager (team sharing)
-- ✅ Platform-specific secrets (Railway, Render, Vercel)
+- ✅ Platform-specific secrets (Render, Cloudflare Pages)
 
 ### API Security Headers (Already Enabled)
 
@@ -1271,9 +1230,9 @@ app.use(Sentry.Handlers.errorHandler());
 SENTRY_DSN=https://xxxxx@xxxxx.ingest.sentry.io/xxxxx
 ```
 
-#### Option 2: Railway/Render Built-in Monitoring
+#### Option 2: Render Built-in Monitoring
 
-- Railway: Deployments → Logs → View metrics
+- Render: Logs → View metrics
 - Render: Service → Logs → Metrics
 
 #### Option 3: Datadog (Comprehensive)
@@ -1328,9 +1287,9 @@ log('info', 'Order created', { orderId: '123', userId: 'user-456' });
 
 **How to scale:**
 
-1. **Vertical:** Bigger instance (Railway → select larger machine)
+1. **Vertical:** Bigger Render plan
 2. **Horizontal:** Multiple instances (enable auto-scaling)
-3. **Database:** Add read replicas (Supabase → Create replica)
+3. **Database:** Add Neon read replicas if needed
 4. **Cache:** Add Redis (Upstash → Upgrade tier)
 5. **CDN:** Expand regions (Cloudinary → enabled by default)
 
@@ -1478,7 +1437,7 @@ npm run build --verbose
 1. **Check Documentation:** See related docs in project root
 2. **Check Logs:** `npm run dev` with verbose logging
 3. **Check Status Pages:**
-   - Supabase: https://status.supabase.com
+   - Neon: https://status.neon.tech
    - Clerk: https://status.clerk.com
    - Cloudinary: https://status.cloudinary.com
 4. **Check Community:**
@@ -1506,7 +1465,7 @@ npm run preview
 
 # Deploy via Git push (if using GitHub integration)
 git push origin main
-# (Vercel/Railway auto-deploys)
+# (Cloudflare Pages/Render auto-deploys)
 ```
 
 ---

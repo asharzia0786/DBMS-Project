@@ -2,10 +2,10 @@
 
 Use this checklist when moving the app beyond local development.
 
-## 1. PostgreSQL
+## 1. PostgreSQL on Neon
 
-1. Create a production database.
-2. Set `DATABASE_URL` in `backend/.env`.
+1. Create a Neon project and database.
+2. Set `DATABASE_URL` in `backend/.env` using the Neon connection string.
 3. Run Prisma deploy on the production backend:
    ```bash
    npm run prisma:deploy
@@ -55,23 +55,26 @@ Use this checklist when moving the app beyond local development.
    - `SAFEPAY_ENVIRONMENT=production`
    - `SAFEPAY_WEBHOOK_SECRET`
 
-## 7. Frontend deployment
+## 7. Frontend deployment on Cloudflare Pages
 
-1. Deploy the frontend app.
+1. Deploy the frontend app to Cloudflare Pages.
 2. Set:
-   - `VITE_API_BASE_URL`
-   - `VITE_APP_URL`
-   - `VITE_CLERK_PUBLISHABLE_KEY`
+    - `VITE_API_BASE_URL=https://api.habibandsons.com/api`
+    - `VITE_APP_URL=https://habibandsons.com`
+    - `VITE_CLERK_PUBLISHABLE_KEY`
+3. Point the apex domain to Cloudflare Pages and redirect `www.habibandsons.com` to it.
+4. Use the `Frontend/public/_redirects` file so client-side routes resolve on refresh.
 
-## 8. Backend deployment
+## 8. Backend deployment on Render
 
-1. Deploy the backend app.
+1. Deploy the backend app to Render.
 2. Set:
-   - `NODE_ENV=production`
-   - `PORT`
-   - `FRONTEND_URL`
-   - `FRONTEND_URLS`
-   - all service credentials above
+    - `NODE_ENV=production`
+    - `PORT`
+    - `FRONTEND_URL=https://habibandsons.com`
+    - `FRONTEND_URLS=https://habibandsons.com,https://www.habibandsons.com`
+    - all service credentials above
+3. Expose the backend on `api.habibandsons.com` and use that in `VITE_API_BASE_URL`.
 
 ## 9. Validation
 

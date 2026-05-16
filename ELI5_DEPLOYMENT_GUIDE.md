@@ -29,7 +29,7 @@ The backend is the brain that talks to the database and services.
 
 ### What to do
 
-1. Open your backend deployment platform, like Railway or Render.
+1. Open your backend deployment platform, Render.
 2. Create a new service from the repo.
 3. Set the backend environment variables.
 4. Connect the production database.
@@ -77,7 +77,7 @@ The database is the notebook where the website remembers everything.
 
 ### What to do
 
-1. Create a PostgreSQL database.
+1. Create a Neon PostgreSQL database.
 2. Put the database address into `DATABASE_URL`.
 3. Run the production migration command:
 
@@ -208,7 +208,7 @@ The frontend is the pretty face of the website.
 
 ### What to do
 
-1. Deploy the frontend on Vercel or Netlify.
+1. Deploy the frontend on Cloudflare Pages.
 2. Add these frontend env values:
 
 - `VITE_API_BASE_URL`
@@ -235,9 +235,9 @@ Now make both halves talk to each other.
 
 ### What to do
 
-1. Set `VITE_API_BASE_URL` to the deployed backend API URL.
-2. Set `VITE_APP_URL` to your live frontend URL.
-3. Set `FRONTEND_URLS` in the backend to allow your live frontend.
+1. Set `VITE_API_BASE_URL` to `https://api.habibandsons.com/api`.
+2. Set `VITE_APP_URL` to `https://habibandsons.com`.
+3. Set `FRONTEND_URLS` in the backend to `https://habibandsons.com,https://www.habibandsons.com`.
 
 ### Why this matters
 
