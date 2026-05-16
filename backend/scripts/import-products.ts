@@ -22,7 +22,9 @@ type ParsedProduct = {
   imagePaths: string[];
 };
 
-const PRODUCT_ROOT = path.resolve(process.cwd(), "..", "Product desc and imgs");
+const PRODUCT_ROOT = process.env.PRODUCT_ROOT
+  ? path.resolve(process.env.PRODUCT_ROOT)
+  : path.resolve(process.cwd(), "..", "Product desc and imgs");
 const IMAGE_EXTENSIONS = new Set([".jpg", ".jpeg", ".png", ".webp"]);
 
 const priceByFolder: Record<string, number> = {
