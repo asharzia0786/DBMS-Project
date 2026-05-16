@@ -9,8 +9,7 @@
     "strict": true,
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
-    "resolveJsonModule": true,
-    "types": ["node"]
+    "resolveJsonModule": true
   },
   "include": ["server.ts", "worker.ts", "app/**/*.ts", "server/**/*.ts", "server/**/*.d.ts"]
 }
