@@ -62,8 +62,8 @@ Use this checklist when moving the app beyond local development.
     - `VITE_API_BASE_URL=https://api.habibandsons.com/api`
     - `VITE_APP_URL=https://habibandsons.com`
     - `VITE_CLERK_PUBLISHABLE_KEY`
-3. Point the apex domain to Cloudflare Pages and redirect `www.habibandsons.com` to it.
-4. Use the `Frontend/public/_redirects` file so client-side routes resolve on refresh.
+3. Point the apex domain to Cloudflare and route traffic to the Workers Assets deployment.
+4. Use `Frontend/wrangler.jsonc` with `assets.not_found_handling = "single-page-application"` for client-side routing.
 
 ## 8. Backend deployment on Render
 
