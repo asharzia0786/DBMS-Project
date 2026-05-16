@@ -106,9 +106,10 @@ or
 ## Deployment checklist
 
 1. Set production env values (`DATABASE_URL`, `FRONTEND_URLS`, Clerk keys, etc.).
-2. Build and run migrations:
+2. Deploy with the root `render.yaml` Blueprint or use these Render commands:
    ```bash
    npm ci
+   npm run prisma:generate
    npm run build
    npm run prisma:deploy
    npm run start
