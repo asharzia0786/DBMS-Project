@@ -13,8 +13,6 @@ type ApiEnvelope<T> = ApiSuccess<T> | ApiFailure;
 const configuredApiBaseUrl = import.meta.env.VITE_API_BASE_URL?.trim();
 
 const API_BASE_URL = (configuredApiBaseUrl || "/api").replace(/\/$/, "");
-const FALLBACK_API_BASE_URL = "/api";
-const LOCALBACK_API_BASE_URL = "http://localhost:4000/api";
 
 export type ProductImage = {
   id: string;
@@ -170,51 +168,29 @@ export type CurrentUserResponse = {
 };
 
 export async function request<T>(path: string, init?: RequestInit): Promise<T> {
-  const bases = Array.from(
-    new Set([API_BASE_URL, FALLBACK_API_BASE_URL, LOCALBACK_API_BASE_URL].map((base) => base.replace(/\/$/, ""))),
-  );
-  let lastError: Error | null = null;
+  const response = await fetch(`${API_BASE_URL}${path}`, {
+    ...init,
+    headers: {
+      "Content-Type": "application/json",
+      ...(init?.headers || {}),
+    },
+  });
 
-  for (const baseUrl of bases) {
-    let response: Response;
-    try {
-      response = await fetch(`${baseUrl}${path}`, {
-        ...init,
-        headers: {
-          "Content-Type": "application/json",
-          ...(init?.headers || {}),
-        },
-      });
-    } catch (error) {
-      lastError = error instanceof Error ? error : new Error("Request failed.");
-      if (baseUrl !== bases[bases.length - 1]) {
-        continue;
-      }
-      throw lastError;
-    }
-
-    const contentType = response.headers.get("content-type") || "";
-    if (!contentType.includes("application/json")) {
-      const text = await response.text();
-      lastError = new Error(
-        `API returned ${response.status} ${response.statusText} instead of JSON. Check VITE_API_BASE_URL and backend routing. Response starts with: ${text.slice(0, 80)}`,
-      );
-      if (baseUrl !== bases[bases.length - 1]) {
-        continue;
-      }
-      throw lastError;
-    }
-
-    const body = (await response.json()) as ApiEnvelope<T>;
-
-    if (!response.ok || !body.success) {
-      throw new Error(body.success ? "Request failed." : body.error);
-    }
-
-    return body.data;
+  const contentType = response.headers.get("content-type") || "";
+  if (!contentType.includes("application/json")) {
+    const text = await response.text();
+    throw new Error(
+      `API returned ${response.status} ${response.statusText} instead of JSON. Check VITE_API_BASE_URL and backend routing. Response starts with: ${text.slice(0, 80)}`,
+    );
   }
 
-  throw lastError || new Error("Request failed.");
+  const body = (await response.json()) as ApiEnvelope<T>;
+
+  if (!response.ok || !body.success) {
+    throw new Error(body.success ? "Request failed." : body.error);
+  }
+
+  return body.data;
 }
 
 export function fetchProducts(page = 1, pageSize = 20): Promise<ProductListResponse> {

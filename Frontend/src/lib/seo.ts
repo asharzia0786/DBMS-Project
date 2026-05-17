@@ -25,7 +25,7 @@ function getSiteUrl(): string {
   if (typeof window !== 'undefined' && window.location.origin) {
     return window.location.origin.replace(/\/+$/, '');
   }
-  return 'http://localhost:5173';
+  return 'https://habibandsons.com';
 }
 
 function normalizePath(path: string): string {
