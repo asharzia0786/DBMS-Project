@@ -1,7 +1,7 @@
 import { writeFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 
-const siteUrl = (process.env.VITE_APP_URL || 'http://localhost:5173').replace(/\/+$/, '');
+const siteUrl = (process.env.VITE_APP_URL || 'https://habibandsons.com').replace(/\/+$/, '');
 
 const routes = [
   ['/', 'weekly', '1.0'],

@@ -11,8 +11,9 @@ type ApiFailure = {
 type ApiEnvelope<T> = ApiSuccess<T> | ApiFailure;
 
 const configuredApiBaseUrl = import.meta.env.VITE_API_BASE_URL?.trim();
+const defaultApiBaseUrl = import.meta.env.DEV ? '/api' : 'https://api.habibandsons.com/api';
 
-const API_BASE_URL = (configuredApiBaseUrl || "/api").replace(/\/$/, "");
+const API_BASE_URL = (configuredApiBaseUrl || defaultApiBaseUrl).replace(/\/$/, '');
 
 export type ProductImage = {
   id: string;
