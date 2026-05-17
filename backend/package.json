@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "tsx watch server.ts",
     "worker:dev": "tsx watch worker.ts",
-    "build": "prisma generate && tsc -p tsconfig.json",
+    "build": "tsc -p tsconfig.json",
     "start": "node dist/server.js",
     "worker:start": "node dist/worker.js",
     "postinstall": "echo 'install complete'",
