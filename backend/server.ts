@@ -39,6 +39,7 @@ const allowedOrigins = [
   "http://localhost:5173",
   "https://habibandsons.com",
   "https://www.habibandsons.com",
+  "https://habib-and-sons-cnc.vercel.app"
 ];
 
 /**
